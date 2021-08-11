@@ -1,3 +1,7 @@
+using ApiOnlineShop.Repositories;
+using ApiOnlineShop.Repositories.Interfaces;
+using ApiOnlineShop.Services;
+using ApiOnlineShop.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +30,10 @@ namespace ApiOnlineShop
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IClientesService, ClientesService>();
+            services.AddScoped<IClientesRepository, ClientesRepository>();
+
+
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

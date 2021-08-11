@@ -19,7 +19,8 @@ CREATE TABLE Endereco
 	Bairro			VARCHAR(255)		NOT NULL,
 	Localidade		VARCHAR(255)		NOT NULL,
 	Uf				CHAR(2)				NOT NULL,
-	Pais			VARCHAR(255)		NOT NULL
+	Pais			VARCHAR(255)		NOT NULL,
+	DataInsercao	DATETIME			NOT NULL
 
 	CONSTRAINT PK_EnderecoId PRIMARY KEY(EnderecoId),
 );
@@ -31,7 +32,8 @@ CREATE TABLE InformacoesContato
 	Codigo					INT					NOT NULL	IDENTITY(1000001, 1),
 	Telefone				VARCHAR(15),
 	Celular					VARCHAR(15)			NOT NULL,
-	Email					VARCHAR(255)		NOT NULL
+	Email					VARCHAR(255)		NOT NULL,
+	DataInsercao			DATETIME			NOT NULL
 
 	CONSTRAINT PK_InformacoesContatoId PRIMARY KEY(InformacoesContatoId)
 )
@@ -46,7 +48,8 @@ CREATE TABLE Cliente
 	Sobrenome				VARCHAR(255)		NOT NULL,
 	Cpf						VARCHAR(255)		NOT NULL,
 	EnderecoId				UNIQUEIDENTIFIER	NOT NULL,
-	InformacoesContatoId	UNIQUEIDENTIFIER	NOT NULL
+	InformacoesContatoId	UNIQUEIDENTIFIER	NOT NULL,
+	DataInsercao			DATETIME			NOT NULL
 
 	CONSTRAINT PK_ClienteId PRIMARY KEY(ClienteId),
 
@@ -66,7 +69,8 @@ CREATE TABLE Fornecedor
 	RazaoSocial			VARCHAR(255)		NOT NULL,
 	Cnpj				CHAR(14)			NOT NULL,
 	Contato				VARCHAR(255)		NOT NULL,
-	EnderecoId			UNIQUEIDENTIFIER	NOT NULL
+	EnderecoId			UNIQUEIDENTIFIER	NOT NULL,
+	DataInsercao		DATETIME			NOT NULL
 
 	CONSTRAINT PK_FornecedorId PRIMARY KEY(FornecedorId),
 
@@ -80,7 +84,8 @@ CREATE TABLE Categoria
 	CategoriaId		UNIQUEIDENTIFIER	NOT NULL,
 	Codigo			INT					NOT NULL	IDENTITY(1000001, 1),
 	Nome			VARCHAR(255)		NOT NULL,
-	Descricao		VARCHAR(255)		NOT NULL
+	Descricao		VARCHAR(255)		NOT NULL,
+	DataInsercao	DATETIME			NOT NULL
 
 	CONSTRAINT PK_CategoriaId PRIMARY KEY(CategoriaId)
 );
@@ -94,7 +99,8 @@ CREATE TABLE Produto
 	Medida			VARCHAR(255)		NOT NULL,
 	Preco			FLOAT(2)			NOT NULL,
 	CategoriaId		UNIQUEIDENTIFIER	NOT NULL,
-	FornecedorId	UNIQUEIDENTIFIER	NOT NULL
+	FornecedorId	UNIQUEIDENTIFIER	NOT NULL,
+	DataInsercao	DATETIME			NOT NULL
 
 	CONSTRAINT PK_ProdutoId PRIMARY KEY(ProdutoId),
 
@@ -111,7 +117,8 @@ CREATE TABLE Pedido
 	PedidoId		UNIQUEIDENTIFIER	NOT NULL,
 	Codigo			INT					NOT NULL	IDENTITY(1000001, 1),
 	DataCompra		DATETIME			NOT NULL,
-	ClienteId		UNIQUEIDENTIFIER	NOT NULL
+	ClienteId		UNIQUEIDENTIFIER	NOT NULL,
+	DataInsercao	DATETIME			NOT NULL
 
 	CONSTRAINT PK_PedidoId PRIMARY KEY(PedidoId),
 
@@ -126,7 +133,8 @@ CREATE TABLE DetalhesPedido
 	Codigo				INT					NOT NULL	IDENTITY(1000001, 1),
 	Quantidade			INT					NOT NULL,
 	ProdutoId			UNIQUEIDENTIFIER	NOT NULL,
-	PedidoId			UNIQUEIDENTIFIER	NOT NULL
+	PedidoId			UNIQUEIDENTIFIER	NOT NULL,
+	DataInsercao		DATETIME			NOT NULL
 
 	CONSTRAINT PK_DetalhesPedidoId PRIMARY KEY(DetalhesPedidoId),
 
