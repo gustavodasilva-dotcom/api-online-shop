@@ -1,10 +1,6 @@
 USE OnlineShop
 GO
 
-/*************************************************************************************************************************************
-********************* CORRIGIR PROC. ESTÁ INSERINDO A CHAVE ESTRANGEIRA ERRADA. POSSÍVELMENTE, ALTERAR TABELA. ***********************
-**************************************************************************************************************************************/
-
 ALTER PROCEDURE [dbo].[sp_CadastrarCliente]
 	@PrimeiroNome	VARCHAR(255),
 	@NomeDoMeio		VARCHAR(255),
@@ -27,16 +23,29 @@ AS
 Descrição......: Procedure utilizada para cadastrar clientes.
 Data de criação: 10-08-2021
 **************************************************************************************************************************************/
-		DECLARE @IdEndereco		UNIQUEIDENTIFIER;
-		DECLARE @IdInfoContato	UNIQUEIDENTIFIER;
-		
+		SET NOCOUNT OFF;
+
+		DECLARE @IdEndereco		INT;
+		DECLARE @IdInfoContato	INT;
+		DECLARE @Mensagem		VARCHAR(255);
+
+
+		IF EXISTS (SELECT 1 FROM Cliente WHERE Cpf = @Cpf)
+		BEGIN
+			SET @Mensagem = 'O CPF ' + @Cpf + ' já consta em sistema.';
+			PRINT @Mensagem;
+
+			RETURN;
+		END
+
+		SET @Mensagem = NULL;
+
 
 		PRINT 'Inserindo na tabela Endereco: ';
 
 		INSERT INTO Endereco
 		VALUES
 		(
-			NEWID(),
 			@Cep,
 			@Logradouro,
 			@Numero,
@@ -45,15 +54,16 @@ Data de criação: 10-08-2021
 			@Localidade,
 			@Uf,
 			@Pais,
-			GETDATE()
+			GETDATE(),
+			0
 		);
 
 		PRINT 'Inseriu na tabela de Endereco.';
 
+		
+		SELECT @IdEndereco = EnderecoId FROM Endereco ORDER BY DataInsercao;
 
-		SELECT @IdEndereco = EnderecoId FROM Endereco ORDER BY DataInsercao DESC;
-
-		PRINT 'Id de Endereco cadastrado: ' + CAST(@IdEndereco AS VARCHAR(255))
+		PRINT 'Id de Endereco cadastrado: ' + CAST(@IdEndereco AS VARCHAR(255));
 
 
 		PRINT 'Inserindo na tabela de InformacoesContato: ';
@@ -61,40 +71,41 @@ Data de criação: 10-08-2021
 		INSERT INTO InformacoesContato
 		VALUES
 		(
-			NEWID(),
 			@Telefone,
 			@Celular,
 			@Email,
-			GETDATE()
+			GETDATE(),
+			0
 		);
 
 		PRINT 'Inseriu na tabela de InformacoesContato.';
 
 
 		PRINT 'Inserindo na tabela de Cliente: ';
+		
+		SELECT @IdInfoContato = InformacoesContatoId FROM InformacoesContato ORDER BY DataInsercao;
 
-		SELECT @IdInfoContato = InformacoesContatoId FROM InformacoesContato ORDER BY DataInsercao DESC;
-
-		PRINT 'Id de InformacoesContato cadastrado: ' + CAST(@IdInfoContato AS VARCHAR(255))
+		PRINT 'Id de InformacoesContato cadastrado: ' + CAST(@IdInfoContato AS VARCHAR(255));
 
 
 		INSERT INTO Cliente
 		VALUES
 		(
-			NEWID(),
 			@PrimeiroNome,
 			@NomeDoMeio,
 			@Sobrenome,
 			@Cpf,
 			@IdEndereco,
 			@IdInfoContato,
-			GETDATE()
+			GETDATE(),
+			0
 		);
 
 		PRINT 'Inseriu na tabela de Cliente.';
 
 
-		SELECT		C.PrimeiroNome,
+		SELECT		TOP 1
+					C.PrimeiroNome,
 					C.NomeDoMeio,
 					C.Sobrenome,
 					C.Cpf,
@@ -110,9 +121,9 @@ Data de criação: 10-08-2021
 					E.Uf,
 					E.Pais
 		FROM		Cliente				C
-		INNER JOIN	InformacoesContato  IC ON C.InformacoesContatoId = IC.InformacoesContatoId
-		INNER JOIN	Endereco			E  ON C.EnderecoId			 = E.EnderecoId
-		ORDER BY	C.Codigo DESC;
+		INNER JOIN	InformacoesContato	IC  ON C.InformacoesContatoId = IC.InformacoesContatoId
+		INNER JOIN	Endereco			E	ON C.EnderecoId = E.EnderecoId
+		ORDER BY	C.ClienteId DESC;
 
 	END
 GO

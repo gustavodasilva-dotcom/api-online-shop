@@ -31,7 +31,7 @@ namespace ApiOnlineShop.Repositories
         {
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
-                var cliente = db.ExecuteScalarAsync<ClienteViewModel>(query);
+                var cliente = db.QuerySingleAsync<ClienteViewModel>(query, new { ClienteViewModel = 1 } );
 
                 return await cliente;
             }

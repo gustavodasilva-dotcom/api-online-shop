@@ -33,7 +33,8 @@ namespace ApiOnlineShop
             services.AddScoped<IClientesService, ClientesService>();
             services.AddScoped<IClientesRepository, ClientesRepository>();
 
-
+            services.AddScoped<IFornecedoresService, FornecedoresService>();
+            services.AddScoped<IFornecedoresRepository, FornecedoresRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

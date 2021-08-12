@@ -36,5 +36,14 @@ namespace ApiOnlineShop.Services
 
             return cliente;
         }
+
+        public async Task<ClienteViewModel> Atualizar(string cpf, ClienteInputModel clienteUpdate)
+        {
+            var procedure = $"[dbo].[sp_AtualizarCliente] '{cpf}', '{clienteUpdate.PrimeiroNome}', '{clienteUpdate.NomeDoMeio}', '{clienteUpdate.Sobrenome}', '{clienteUpdate.Cpf}', '{clienteUpdate.Telefone}', '{clienteUpdate.Celular}', '{clienteUpdate.Email}', '{clienteUpdate.Cep}', '{clienteUpdate.Logradouro}', '{clienteUpdate.Numero}', '{clienteUpdate.Complemento}', '{clienteUpdate.Bairro}', '{clienteUpdate.Localidade}', '{clienteUpdate.Uf}', '{clienteUpdate.Pais}'";
+
+            var cliente = await _clientesRepository.ExecutarComando(procedure);
+
+            return cliente;
+        }
     }
 }
