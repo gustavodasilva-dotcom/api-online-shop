@@ -38,25 +38,27 @@ Data de criação: 10-08-2021
 			RETURN;
 		END
 
-		SET @Mensagem = NULL;
-
 
 		PRINT 'Inserindo na tabela Endereco: ';
 
-		INSERT INTO Endereco
-		VALUES
-		(
-			@Cep,
-			@Logradouro,
-			@Numero,
-			@Complemento,
-			@Bairro,
-			@Localidade,
-			@Uf,
-			@Pais,
-			GETDATE(),
-			0
-		);
+		BEGIN TRANSACTION
+
+			INSERT INTO Endereco
+			VALUES
+			(
+				@Cep,
+				@Logradouro,
+				@Numero,
+				@Complemento,
+				@Bairro,
+				@Localidade,
+				@Uf,
+				@Pais,
+				GETDATE(),
+				0
+			);
+
+		COMMIT TRANSACTION
 
 		PRINT 'Inseriu na tabela de Endereco.';
 
@@ -68,15 +70,19 @@ Data de criação: 10-08-2021
 
 		PRINT 'Inserindo na tabela de InformacoesContato: ';
 
-		INSERT INTO InformacoesContato
-		VALUES
-		(
-			@Telefone,
-			@Celular,
-			@Email,
-			GETDATE(),
-			0
-		);
+		BEGIN TRANSACTION
+
+			INSERT INTO InformacoesContato
+			VALUES
+			(
+				@Telefone,
+				@Celular,
+				@Email,
+				GETDATE(),
+				0
+			);
+
+		COMMIT TRANSACTION
 
 		PRINT 'Inseriu na tabela de InformacoesContato.';
 
@@ -88,18 +94,22 @@ Data de criação: 10-08-2021
 		PRINT 'Id de InformacoesContato cadastrado: ' + CAST(@IdInfoContato AS VARCHAR(255));
 
 
-		INSERT INTO Cliente
-		VALUES
-		(
-			@PrimeiroNome,
-			@NomeDoMeio,
-			@Sobrenome,
-			@Cpf,
-			@IdEndereco,
-			@IdInfoContato,
-			GETDATE(),
-			0
-		);
+		BEGIN TRANSACTION
+
+			INSERT INTO Cliente
+			VALUES
+			(
+				@PrimeiroNome,
+				@NomeDoMeio,
+				@Sobrenome,
+				@Cpf,
+				@IdEndereco,
+				@IdInfoContato,
+				GETDATE(),
+				0
+			);
+
+		COMMIT TRANSACTION
 
 		PRINT 'Inseriu na tabela de Cliente.';
 

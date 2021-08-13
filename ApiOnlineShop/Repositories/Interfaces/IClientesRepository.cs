@@ -7,5 +7,6 @@ namespace ApiOnlineShop.Repositories.Interfaces
     {
         Task<ClienteViewModel> Obter(string query);
         Task<ClienteViewModel> ExecutarComando(string query);
+        Task ExecutarComandoSemRetorno(string query);
     }
 }

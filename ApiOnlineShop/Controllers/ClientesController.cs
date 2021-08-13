@@ -65,5 +65,13 @@ namespace ApiOnlineShop.Controllers
                 return StatusCode(500, "Erro interno no servidor! Por favor, tentar novamente.");
             }
         }
+
+        [HttpDelete("{cpf}")]
+        public async Task<ActionResult> Deletar([FromRoute] string cpf)
+        {
+            await _clientesService.Deletar(cpf);
+
+            return StatusCode(200, "Cliente deletado com sucesso!");
+        }
     }
 }

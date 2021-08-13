@@ -18,7 +18,7 @@ namespace ApiOnlineShop.Services
 
         public async Task<ClienteViewModel> Obter(string cpf)
         {
-            var query = $"SELECT C.PrimeiroNome, C.NomeDoMeio, C.Sobrenome, C.Cpf, IC.Telefone, IC.Celular, IC.Email, E.Cep, E.Logradouro, E.Numero, E.Complemento, E.Bairro, E.Localidade, E.Uf, E.Pais FROM Cliente C INNER JOIN InformacoesContato IC  ON C.InformacoesContatoId = IC.InformacoesContatoId INNER JOIN Endereco E ON C.EnderecoId = E.EnderecoId WHERE C.Cpf = '{cpf}'";
+            var query = $"SELECT C.PrimeiroNome, C.NomeDoMeio, C.Sobrenome, C.Cpf, IC.Telefone, IC.Celular, IC.Email, E.Cep, E.Logradouro, E.Numero, E.Complemento, E.Bairro, E.Localidade, E.Uf, E.Pais FROM Cliente C INNER JOIN InformacoesContato IC ON C.InformacoesContatoId = IC.InformacoesContatoId INNER JOIN Endereco E ON C.EnderecoId = E.EnderecoId WHERE C.Cpf = '{cpf}' AND C.Excluido = 0 AND E.Excluido = 0 AND IC.Excluido = 0";
 
             var cliente = await _clientesRepository.Obter(query);
 
@@ -44,6 +44,13 @@ namespace ApiOnlineShop.Services
             var cliente = await _clientesRepository.ExecutarComando(procedure);
 
             return cliente;
+        }
+
+        public async Task Deletar(string cpf)
+        {
+            var procedure = $"[dbo].[sp_DeletarCliente] '{cpf}'";
+
+            await _clientesRepository.ExecutarComandoSemRetorno(procedure);
         }
     }
 }

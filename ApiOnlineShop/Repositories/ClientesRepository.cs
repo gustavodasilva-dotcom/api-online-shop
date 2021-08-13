@@ -37,5 +37,12 @@ namespace ApiOnlineShop.Repositories
             }
         }
 
+        public async Task ExecutarComandoSemRetorno(string query)
+        {
+            using (IDbConnection db = new SqlConnection(_connectionString))
+            {
+                await db.ExecuteAsync(query);
+            }
+        }
     }
 }

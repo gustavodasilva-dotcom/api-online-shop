@@ -112,13 +112,17 @@ Data de criação: 11-08-2021
 			END
 
 		
-		UPDATE	Cliente
-		SET
-				PrimeiroNome	= @PrimeiroNome,
-				NomeDoMeio		= @NomeDoMeio,
-				@Sobrenome		= @Sobrenome,
-				Cpf				= @Cpf
-		WHERE	ClienteId		= @ClienteId
+		BEGIN TRANSACTION
+
+			UPDATE	Cliente
+			SET
+					PrimeiroNome	= @PrimeiroNome,
+					NomeDoMeio		= @NomeDoMeio,
+					@Sobrenome		= @Sobrenome,
+					Cpf				= @Cpf
+			WHERE	ClienteId		= @ClienteId
+
+		COMMIT TRANSACTION
 
 		SET @Mensagem = 'Cliente atualizado no banco de dados com sucesso!';
 		PRINT @Mensagem;
@@ -127,17 +131,21 @@ Data de criação: 11-08-2021
 		SET @Mensagem = NULL;
 
 
-		UPDATE	Endereco
-		SET
-				Cep				= @Cep,
-				Logradouro		= @Logradouro,
-				Numero			= @Numero,
-				Complemento		= @Complemento,
-				Bairro			= @Bairro,
-				Localidade		= @Localidade,
-				Uf				= @Uf,
-				Pais			= @Pais
-		WHERE	EnderecoId		= @EnderecoId
+		BEGIN TRANSACTION
+
+			UPDATE	Endereco
+			SET
+					Cep				= @Cep,
+					Logradouro		= @Logradouro,
+					Numero			= @Numero,
+					Complemento		= @Complemento,
+					Bairro			= @Bairro,
+					Localidade		= @Localidade,
+					Uf				= @Uf,
+					Pais			= @Pais
+			WHERE	EnderecoId		= @EnderecoId
+
+		COMMIT TRANSACTION
 
 		SET @Mensagem = 'Endereco atualizado no banco de dados com sucesso!';
 		PRINT @Mensagem;
@@ -146,12 +154,16 @@ Data de criação: 11-08-2021
 		SET @Mensagem = NULL;
 
 
-		UPDATE	InformacoesContato
-		SET
-				Telefone				= @Telefone,
-				Celular					= @Celular,
-				Email					= @Email
-		WHERE	InformacoesContatoId	= @InfoContatoId
+		BEGIN TRANSACTION
+
+			UPDATE	InformacoesContato
+			SET
+					Telefone				= @Telefone,
+					Celular					= @Celular,
+					Email					= @Email
+			WHERE	InformacoesContatoId	= @InfoContatoId
+
+		COMMIT TRANSACTION
 
 		SET @Mensagem = 'InformacoesContato atualizado no banco de dados com sucesso!';
 		PRINT @Mensagem;
