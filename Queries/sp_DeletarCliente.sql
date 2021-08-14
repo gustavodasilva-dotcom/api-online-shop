@@ -1,7 +1,7 @@
 USE OnlineShop
 GO
 
-CREATE PROCEDURE [dbo].[sp_DeletarCliente]
+ALTER PROCEDURE [dbo].[sp_DeletarCliente]
 	@Cpf			VARCHAR(255)
 AS
 	BEGIN
@@ -22,7 +22,7 @@ Data de criação: 12-08-2021
 			SET @Mensagem = 'Cliente não consta em sistema.';
 			PRINT @Mensagem;
 
-			RETURN;
+			RAISERROR(@Mensagem, 16, 1);
 		END
 
 
@@ -31,7 +31,7 @@ Data de criação: 12-08-2021
 			SET @Mensagem = 'Cliente não consta em sistema.';
 			PRINT @Mensagem;
 
-			RETURN;
+			RAISERROR(@Mensagem, 16, 1);
 		END
 
 
@@ -57,7 +57,15 @@ Data de criação: 12-08-2021
 				SET @Mensagem = 'Endereco não consta em sistema.';
 				PRINT @Mensagem;
 
-				RETURN;
+				RAISERROR(@Mensagem, 16, 1);
+			END
+		
+		IF (SELECT 1 FROM Endereco WHERE EnderecoId = @EnderecoId AND Excluido = 1) IS NOT NULL
+			BEGIN
+				SET @Mensagem = 'Endereco não consta em sistema.';
+				PRINT @Mensagem;
+
+				RAISERROR(@Mensagem, 16, 1);
 			END
 		ELSE
 			BEGIN
@@ -73,7 +81,15 @@ Data de criação: 12-08-2021
 				SET @Mensagem = 'InformacoesContato não consta em sistema.';
 				PRINT @Mensagem;
 
-				RETURN;
+				RAISERROR(@Mensagem, 16, 1);
+			END
+		
+		IF (SELECT 1 FROM InformacoesContato WHERE InformacoesContatoId = @InfoContatoId AND Excluido = 0) IS NOT NULL
+			BEGIN
+				SET @Mensagem = 'InformacoesContato não consta em sistema.';
+				PRINT @Mensagem;
+
+				RAISERROR(@Mensagem, 16, 1);
 			END
 		ELSE
 			BEGIN
@@ -91,27 +107,36 @@ Data de criação: 12-08-2021
 					Excluido	= 1
 			WHERE	ClienteId	= @ClienteId;
 
-			SET @Mensagem = 'Cliente deletado com sucesso!';
-			SET @Mensagem = NULL;
+		COMMIT TRANSACTION
+
+		SET @Mensagem = 'Cliente deletado com sucesso!';
+		SET @Mensagem = NULL;
+
+
+		BEGIN TRANSACTION
 
 			UPDATE	Endereco
 			SET
 					Excluido	= 1
 			WHERE	EnderecoId	= @EnderecoId;
 
-			SET @Mensagem = 'Endereco deletado com sucesso!';
-			SET @Mensagem = NULL;
+		COMMIT TRANSACTION
 
+		SET @Mensagem = 'Endereco deletado com sucesso!';
+		SET @Mensagem = NULL;
+
+
+		BEGIN TRANSACTION
 
 			UPDATE	InformacoesContato
 			SET
 					Excluido	= 1
 			WHERE	InformacoesContatoId = @InfoContatoId;
 
-			SET @Mensagem = 'InformacoesContato deletado com sucesso!';
-			SET @Mensagem = NULL;
-
 		COMMIT TRANSACTION
+
+		SET @Mensagem = 'InformacoesContato deletado com sucesso!';
+		SET @Mensagem = NULL;
 
 	END
 GO

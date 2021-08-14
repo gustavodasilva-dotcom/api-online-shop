@@ -49,5 +49,37 @@ namespace ApiOnlineShop.Controllers
                 return StatusCode(204, "Fornecedor já está cadastrado no sistema!");
             }
         }
+
+        [HttpPut("{cnpj}")]
+        public async Task<ActionResult<FornecedorViewModel>> Atualizar([FromRoute] string cnpj, [FromBody] FornecedorInputModel fornecedorUpdate)
+        {
+            try
+            {
+                var fornecedor = await _fornecedoresServices.Atualizar(cnpj, fornecedorUpdate);
+
+                return StatusCode(200, fornecedor);
+            }
+            // TODO: Criar Exception especial para as validações da rotina.
+            catch (Exception ex)
+            {
+                return StatusCode(204, "Fornecedor não consta em sistema.");
+            }
+        }
+
+        [HttpDelete("{cnpj}")]
+        public async Task<ActionResult> Deletar([FromRoute] string cnpj)
+        {
+            try
+            {
+                await _fornecedoresServices.Deletar(cnpj);
+
+                return StatusCode(200, "Fornecedor excluído com sucesso!");
+            }
+            // TODO: Criar Exception especial para as validações da rotina.
+            catch (Exception ex)
+            {
+                return StatusCode(204, "Fornecedor não consta em sistema.");
+            }
+        }
     }
 }

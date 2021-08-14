@@ -8,5 +8,7 @@ namespace ApiOnlineShop.Services.Interfaces
     {
         Task<FornecedorViewModel> Obter(string cnpj);
         Task<FornecedorViewModel> Inserir(FornecedorInputModel fornecedorInsert);
+        Task<FornecedorViewModel> Atualizar(string cnpj, FornecedorInputModel fornecedorUpdate);
+        Task Deletar(string cnpj);
     }
 }

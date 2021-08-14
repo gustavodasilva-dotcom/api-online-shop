@@ -31,28 +31,37 @@ Data de criação: 11-08-2021
 		DECLARE @EnderecoId		INT;
 		DECLARE @InfoContatoId	INT;
 
+
 		IF (SELECT 1 FROM Cliente WHERE Cpf = @CpfRota) IS NULL
 		BEGIN
 			SET @Mensagem = 'O Cpf ' + @CpfRota + ' não consta em sistema.';
 			PRINT @Mensagem;
 			PRINT '';
 
-			RETURN 
+			RAISERROR(@Mensagem, 16, 1); 
 		END
 
-		SET @Mensagem = NULL;
+		IF (SELECT 1 FROM Cliente WHERE Cpf = @CpfRota AND Excluido = 1) IS NOT NULL
+		BEGIN
+			SET @Mensagem = 'O Cpf ' + @CpfRota + ' não consta em sistema.';
+			PRINT @Mensagem;
+			PRINT '';
+
+			RAISERROR(@Mensagem, 16, 1); 
+		END
 
 
 		PRINT 'Selecionando os ids do Cliente, Endereco e InformacoesContato com base no CPF ' + @CpfRota;
 		PRINT '';
 
-		SELECT @ClienteId		= ClienteId				FROM Cliente WHERE Cpf = @CpfRota
+		SELECT @ClienteId		= ClienteId				FROM Cliente WHERE Cpf = @CpfRota AND Excluido = 0
 
-		SELECT @EnderecoId		= EnderecoId			FROM Cliente WHERE Cpf = @CpfRota AND ClienteId = @ClienteId
+		SELECT @EnderecoId		= EnderecoId			FROM Cliente WHERE Cpf = @CpfRota AND ClienteId = @ClienteId AND Excluido = 0
 
-		SELECT @InfoContatoId	= InformacoesContatoId	FROM Cliente WHERE Cpf = @CpfRota AND ClienteId = @ClienteId
+		SELECT @InfoContatoId	= InformacoesContatoId	FROM Cliente WHERE Cpf = @CpfRota AND ClienteId = @ClienteId AND Excluido = 0
 
-		IF EXISTS (SELECT 1 FROM Cliente WHERE ClienteId = @ClienteId)
+
+		IF EXISTS (SELECT 1 FROM Cliente WHERE ClienteId = @ClienteId AND Excluido = 0)
 			BEGIN
 				SET @Mensagem = 'Cliente encontrado em sistema: ' + CAST(@ClienteId AS VARCHAR(8));
 				
@@ -68,11 +77,11 @@ Data de criação: 11-08-2021
 				PRINT @Mensagem;
 				PRINT '';
 
-				RETURN;
+				RAISERROR(@Mensagem, 16, 1);;
 			END
 
 
-		IF EXISTS (SELECT 1 FROM Endereco WHERE EnderecoId = @EnderecoId)
+		IF EXISTS (SELECT 1 FROM Endereco WHERE EnderecoId = @EnderecoId AND Excluido = 0)
 			BEGIN
 				SET @Mensagem = 'Endereco encontrado em sistema: ' + CAST(@EnderecoId AS VARCHAR(8));
 				
@@ -88,11 +97,11 @@ Data de criação: 11-08-2021
 				PRINT @Mensagem;
 				PRINT '';
 
-				RETURN;
+				RAISERROR(@Mensagem, 16, 1);;
 			END
 
 
-		IF EXISTS (SELECT 1 FROM InformacoesContato WHERE InformacoesContatoId = @InfoContatoId)
+		IF EXISTS (SELECT 1 FROM InformacoesContato WHERE InformacoesContatoId = @InfoContatoId AND Excluido = 0)
 			BEGIN
 				SET @Mensagem = 'InformacoesContato encontrado em sistema: ' + CAST(@InfoContatoId AS VARCHAR(8));
 				
@@ -108,7 +117,7 @@ Data de criação: 11-08-2021
 				PRINT @Mensagem;
 				PRINT '';
 
-				RETURN;
+				RAISERROR(@Mensagem, 16, 1);;
 			END
 
 		
@@ -118,7 +127,7 @@ Data de criação: 11-08-2021
 			SET
 					PrimeiroNome	= @PrimeiroNome,
 					NomeDoMeio		= @NomeDoMeio,
-					@Sobrenome		= @Sobrenome,
+					Sobrenome		= @Sobrenome,
 					Cpf				= @Cpf
 			WHERE	ClienteId		= @ClienteId
 

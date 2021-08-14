@@ -17,7 +17,7 @@ namespace ApiOnlineShop.Services
 
         public async Task<FornecedorViewModel> Obter(string cnpj)
         {
-            var query = $"SELECT NomeFantasia, RazaoSocial, Cnpj, Contato, Cep, Logradouro, Numero, Complemento, Bairro, Localidade, Uf, Pais FROM Fornecedor F INNER JOIN Endereco E ON F.EnderecoId = E.EnderecoId WHERE Cnpj = '{cnpj}'";
+            var query = $"SELECT NomeFantasia, RazaoSocial, Cnpj, Contato, Cep, Logradouro, Numero, Complemento, Bairro, Localidade, Uf, Pais FROM Fornecedor F INNER JOIN Endereco E ON F.EnderecoId = E.EnderecoId WHERE Cnpj = '{cnpj}' AND F.Excluido = 0 AND E.Excluido = 0";
 
             var fornecedor = await _fornecedoresRepository.Obter(query);
 
@@ -33,5 +33,20 @@ namespace ApiOnlineShop.Services
             return fornecedor;
         }
 
+        public async Task<FornecedorViewModel> Atualizar(string cnpj, FornecedorInputModel fornecedorUpdate)
+        {
+            var query = $"[dbo].[sp_AtualizarFornecedor] '{cnpj}', '{fornecedorUpdate.NomeFantasia}', '{fornecedorUpdate.RazaoSocial}', '{fornecedorUpdate.Cnpj}', '{fornecedorUpdate.Contato}', '{fornecedorUpdate.Cep}', '{fornecedorUpdate.Logradouro}', '{fornecedorUpdate.Numero}', '{fornecedorUpdate.Complemento}', '{fornecedorUpdate.Bairro}', '{fornecedorUpdate.Localidade}', '{fornecedorUpdate.Uf}', '{fornecedorUpdate.Pais}'";
+
+            var fornecedor = await _fornecedoresRepository.ExecutarComando(query);
+
+            return fornecedor;
+        }
+
+        public async Task Deletar(string cnpj)
+        {
+            var query = $"[dbo].[sp_DeletarFornecedor] '{cnpj}'";
+
+            await _fornecedoresRepository.ExecutarComandoSemRetorno(query);
+        }
     }
 }

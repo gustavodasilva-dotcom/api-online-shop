@@ -27,7 +27,6 @@ namespace ApiOnlineShop.Controllers
 
                 return StatusCode(200, cliente);
             }
-            // TODO: Criar Exception especial para clientes não encontrados.
             catch (Exception ex)
             {
                 return StatusCode(204, "Cliente não foi encontrado encontrado.");
@@ -37,17 +36,17 @@ namespace ApiOnlineShop.Controllers
         [HttpPost]
         public async Task<ActionResult<ClienteViewModel>> Inserir([FromBody] ClienteInputModel clienteInsert)
         {
-            try
-            {
+            //try
+            //{
                 var cliente = await _clientesService.Inserir(clienteInsert);
 
                 return StatusCode(200, cliente);
-            }
+            //}
             // TODO: Criar Exception especial para as validações da rotina.
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Erro interno no servidor! Por favor, tentar novamente.");
-            }
+            //catch (Exception ex)
+            //{
+            //    return StatusCode(500, "Erro interno no servidor! Por favor, tentar novamente.");
+            //}
         }
 
         [HttpPut("{cpf}")]
