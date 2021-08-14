@@ -18,12 +18,9 @@ namespace ApiOnlineShop.Services
 
         public async Task<ClienteViewModel> Obter(string cpf)
         {
-            var query = $"SELECT C.PrimeiroNome, C.NomeDoMeio, C.Sobrenome, C.Cpf, IC.Telefone, IC.Celular, IC.Email, E.Cep, E.Logradouro, E.Numero, E.Complemento, E.Bairro, E.Localidade, E.Uf, E.Pais FROM Cliente C INNER JOIN InformacoesContato IC ON C.InformacoesContatoId = IC.InformacoesContatoId INNER JOIN Endereco E ON C.EnderecoId = E.EnderecoId WHERE C.Cpf = '{cpf}' AND C.Excluido = 0 AND E.Excluido = 0 AND IC.Excluido = 0";
+            var query = $"[dbo].[sp_ObterCliente] '{cpf}'";
 
             var cliente = await _clientesRepository.Obter(query);
-
-            if (cliente == null)
-                throw new Exception();
 
             return cliente;
         }

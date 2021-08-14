@@ -35,10 +35,7 @@ Data de criação: 10-08-2021
 			SET @Mensagem = 'O CPF ' + @Cpf + ' já consta em sistema.';
 			PRINT @Mensagem;
 
-			-- TODO: Analisar o comportamento das rotinas, pois, mesmo após erro e retorno, as informações
-			-- estão sendo inseridas nas tabelas.
-			RAISERROR(@Mensagem, 16, 1);
-			RETURN;
+			RAISERROR(@Mensagem, 20, -1) WITH LOG;
 		END
 
 

@@ -30,7 +30,7 @@ Data de criação: 12-08-2021
 			SET @Mensagem = 'O CNPJ ' + @Cnpj + ' já consta em sistema.';
 			PRINT @Mensagem;
 
-			RAISERROR(@Mensagem, 16, 1);
+			RAISERROR(@Mensagem, 20, -1) WITH LOG;
 		END
 
 

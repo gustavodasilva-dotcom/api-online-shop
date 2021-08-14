@@ -22,7 +22,7 @@ Data de criação: 12-08-2021
 			SET @Mensagem = 'Cliente não consta em sistema.';
 			PRINT @Mensagem;
 
-			RAISERROR(@Mensagem, 16, 1);
+			RAISERROR(@Mensagem, 20, -1) WITH LOG;
 		END
 
 
@@ -31,11 +31,11 @@ Data de criação: 12-08-2021
 			SET @Mensagem = 'Cliente não consta em sistema.';
 			PRINT @Mensagem;
 
-			RAISERROR(@Mensagem, 16, 1);
+			RAISERROR(@Mensagem, 20, -1) WITH LOG;
 		END
 
 
-		SELECT @ClienteId = ClienteId FROM Cliente WHERE Cpf = @Cpf;
+		SELECT @ClienteId = ClienteId FROM Cliente WHERE Cpf = @Cpf AND Excluido = 0;
 
 		IF @ClienteId IS NOT NULL
 		BEGIN
@@ -57,7 +57,7 @@ Data de criação: 12-08-2021
 				SET @Mensagem = 'Endereco não consta em sistema.';
 				PRINT @Mensagem;
 
-				RAISERROR(@Mensagem, 16, 1);
+				RAISERROR(@Mensagem, 20, -1) WITH LOG;
 			END
 		
 		IF (SELECT 1 FROM Endereco WHERE EnderecoId = @EnderecoId AND Excluido = 1) IS NOT NULL
@@ -65,7 +65,7 @@ Data de criação: 12-08-2021
 				SET @Mensagem = 'Endereco não consta em sistema.';
 				PRINT @Mensagem;
 
-				RAISERROR(@Mensagem, 16, 1);
+				RAISERROR(@Mensagem, 20, -1) WITH LOG;
 			END
 		ELSE
 			BEGIN
@@ -81,15 +81,15 @@ Data de criação: 12-08-2021
 				SET @Mensagem = 'InformacoesContato não consta em sistema.';
 				PRINT @Mensagem;
 
-				RAISERROR(@Mensagem, 16, 1);
+				RAISERROR(@Mensagem, 20, -1) WITH LOG;
 			END
 		
-		IF (SELECT 1 FROM InformacoesContato WHERE InformacoesContatoId = @InfoContatoId AND Excluido = 0) IS NOT NULL
+		IF (SELECT 1 FROM InformacoesContato WHERE InformacoesContatoId = @InfoContatoId AND Excluido = 1) IS NOT NULL
 			BEGIN
 				SET @Mensagem = 'InformacoesContato não consta em sistema.';
 				PRINT @Mensagem;
 
-				RAISERROR(@Mensagem, 16, 1);
+				RAISERROR(@Mensagem, 20, -1) WITH LOG;
 			END
 		ELSE
 			BEGIN

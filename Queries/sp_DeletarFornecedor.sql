@@ -21,7 +21,7 @@ Data de criação: 13-08-2021
 			SET @Mensagem = 'Fornecedor não consta em sistema.';
 			PRINT @Mensagem;
 
-			RAISERROR(@Mensagem, 16, 1);
+			RAISERROR(@Mensagem, 20, -1) WITH LOG;
 		END
 
 
@@ -30,7 +30,7 @@ Data de criação: 13-08-2021
 			SET @Mensagem = 'Fornecedor não consta em sistema.';
 			PRINT @Mensagem;
 
-			RAISERROR(@Mensagem, 16, 1);
+			RAISERROR(@Mensagem, 20, -1) WITH LOG;
 		END
 
 
@@ -55,7 +55,7 @@ Data de criação: 13-08-2021
 				SET @Mensagem = 'Endereco não consta em sistema.';
 				PRINT @Mensagem;
 
-				RAISERROR(@Mensagem, 16, 1);
+				RAISERROR(@Mensagem, 20, -1) WITH LOG;
 			END
 
 		IF (SELECT 1 FROM Endereco WHERE EnderecoId = @EnderecoId AND Excluido = 1) IS NOT NULL
@@ -63,7 +63,7 @@ Data de criação: 13-08-2021
 				SET @Mensagem = 'Endereco não consta em sistema.';
 				PRINT @Mensagem;
 
-				RAISERROR(@Mensagem, 16, 1);
+				RAISERROR(@Mensagem, 20, -1) WITH LOG;
 			END
 		ELSE
 			BEGIN

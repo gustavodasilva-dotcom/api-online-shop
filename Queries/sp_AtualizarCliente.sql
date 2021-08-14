@@ -38,7 +38,7 @@ Data de criação: 11-08-2021
 			PRINT @Mensagem;
 			PRINT '';
 
-			RAISERROR(@Mensagem, 16, 1); 
+			RAISERROR(@Mensagem, 20, -1) WITH LOG; 
 		END
 
 		IF (SELECT 1 FROM Cliente WHERE Cpf = @CpfRota AND Excluido = 1) IS NOT NULL
@@ -47,7 +47,7 @@ Data de criação: 11-08-2021
 			PRINT @Mensagem;
 			PRINT '';
 
-			RAISERROR(@Mensagem, 16, 1); 
+			RAISERROR(@Mensagem, 20, -1) WITH LOG;
 		END
 
 
@@ -77,7 +77,7 @@ Data de criação: 11-08-2021
 				PRINT @Mensagem;
 				PRINT '';
 
-				RAISERROR(@Mensagem, 16, 1);;
+				RAISERROR(@Mensagem, 20, -1) WITH LOG;
 			END
 
 
@@ -97,7 +97,7 @@ Data de criação: 11-08-2021
 				PRINT @Mensagem;
 				PRINT '';
 
-				RAISERROR(@Mensagem, 16, 1);;
+				RAISERROR(@Mensagem, 20, -1) WITH LOG;
 			END
 
 
@@ -117,7 +117,7 @@ Data de criação: 11-08-2021
 				PRINT @Mensagem;
 				PRINT '';
 
-				RAISERROR(@Mensagem, 16, 1);;
+				RAISERROR(@Mensagem, 20, -1) WITH LOG;
 			END
 
 		

@@ -17,7 +17,7 @@ namespace ApiOnlineShop.Services
 
         public async Task<FornecedorViewModel> Obter(string cnpj)
         {
-            var query = $"SELECT NomeFantasia, RazaoSocial, Cnpj, Contato, Cep, Logradouro, Numero, Complemento, Bairro, Localidade, Uf, Pais FROM Fornecedor F INNER JOIN Endereco E ON F.EnderecoId = E.EnderecoId WHERE Cnpj = '{cnpj}' AND F.Excluido = 0 AND E.Excluido = 0";
+            var query = $"[dbo].[sp_ObterFornecedor] '{cnpj}'";
 
             var fornecedor = await _fornecedoresRepository.Obter(query);
 

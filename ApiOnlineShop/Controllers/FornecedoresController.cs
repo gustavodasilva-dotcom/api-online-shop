@@ -3,6 +3,7 @@ using ApiOnlineShop.Models.ViewModels;
 using ApiOnlineShop.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 
 namespace ApiOnlineShop.Controllers
@@ -27,10 +28,23 @@ namespace ApiOnlineShop.Controllers
 
                 return StatusCode(200, fornecedor);
             }
-            // TODO: Criar Exception especial para as validações da rotina.
-            catch (Exception ex)
+            catch (SqlException ex)
             {
-                return StatusCode(204, "Fornecedor não encontrado no sistema!");
+                int statusCode;
+                string mensagem;
+
+                if (ex.Message.Contains("Fornecedor não consta em sistema."))
+                {
+                    statusCode = 404;
+                    mensagem = "Fornecedor não consta em sistema.";
+                }
+                else
+                {
+                    statusCode = 500;
+                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
+                }
+                
+                return StatusCode(statusCode, mensagem);
             }
         }
 
@@ -41,12 +55,24 @@ namespace ApiOnlineShop.Controllers
             {
                 var fornecedor = await _fornecedoresServices.Inserir(fornecedorInsert);
 
-                return StatusCode(200, fornecedor);
+                return StatusCode(201, fornecedor);
             }
-            // TODO: Criar Exception especial para as validações da rotina.
-            catch (Exception ex)
+            catch (SqlException ex)
             {
-                return StatusCode(204, "Fornecedor já está cadastrado no sistema!");
+                int statusCode;
+                string mensagem;
+
+                if (ex.Message.Contains("já consta em sistema."))
+                {
+                    statusCode = 409;
+                    mensagem = "O CNPJ informado já consta em sistema.";
+                } else
+                {
+                    statusCode = 500;
+                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
+                }
+
+                return StatusCode(statusCode, mensagem);
             }
         }
 
@@ -59,10 +85,33 @@ namespace ApiOnlineShop.Controllers
 
                 return StatusCode(200, fornecedor);
             }
-            // TODO: Criar Exception especial para as validações da rotina.
-            catch (Exception ex)
+            catch (SqlException ex)
             {
-                return StatusCode(204, "Fornecedor não consta em sistema.");
+                int statusCode;
+                string mensagem;
+
+                if (ex.Message.Contains("não consta em sistema."))
+                {
+                    statusCode = 404;
+                    mensagem = "O CNPJ informado não consta em sistema.";
+                }
+                else if (ex.Message.Contains("Fornecedor não encontrado em sistema."))
+                {
+                    statusCode = 404;
+                    mensagem = "Fornecedor não encontrado em sistema.";
+                }
+                else if (ex.Message.Contains("Endereco não encontrado em sistema."))
+                {
+                    statusCode = 404;
+                    mensagem = "Endereco não encontrado em sistema.";
+                }
+                else
+                {
+                    statusCode = 500;
+                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
+                }
+
+                return StatusCode(statusCode, mensagem);
             }
         }
 
@@ -75,10 +124,28 @@ namespace ApiOnlineShop.Controllers
 
                 return StatusCode(200, "Fornecedor excluído com sucesso!");
             }
-            // TODO: Criar Exception especial para as validações da rotina.
-            catch (Exception ex)
+            catch (SqlException ex)
             {
-                return StatusCode(204, "Fornecedor não consta em sistema.");
+                int statusCode;
+                string mensagem;
+
+                if (ex.Message.Contains("Fornecedor não consta em sistema."))
+                {
+                    statusCode = 404;
+                    mensagem = "Fornecedor não consta em sistema.";
+                }
+                else if (ex.Message.Contains("Endereco não consta em sistema."))
+                {
+                    statusCode = 404;
+                    mensagem = "Endereco não consta em sistema.";
+                }
+                else
+                {
+                    statusCode = 500;
+                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
+                }
+
+                return StatusCode(statusCode, mensagem);
             }
         }
     }

@@ -35,7 +35,7 @@ Data de criação: 13-08-2021
 			PRINT @Mensagem;
 			PRINT '';
 
-			RAISERROR(@Mensagem, 16, 1); 
+			RAISERROR(@Mensagem, 20, -1) WITH LOG;
 		END
 
 
@@ -45,7 +45,7 @@ Data de criação: 13-08-2021
 			PRINT @Mensagem;
 			PRINT '';
 
-			RAISERROR(@Mensagem, 16, 1); 
+			RAISERROR(@Mensagem, 20, -1) WITH LOG;
 		END
 
 
@@ -73,7 +73,7 @@ Data de criação: 13-08-2021
 				PRINT @Mensagem;
 				PRINT '';
 
-				RAISERROR(@Mensagem, 16, 1);;
+				RAISERROR(@Mensagem, 20, -1) WITH LOG;
 			END
 
 
@@ -93,7 +93,7 @@ Data de criação: 13-08-2021
 				PRINT @Mensagem;
 				PRINT '';
 
-				RAISERROR(@Mensagem, 16, 1);;
+				RAISERROR(@Mensagem, 20, -1) WITH LOG;
 			END
 
 		
