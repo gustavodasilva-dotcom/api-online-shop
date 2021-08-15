@@ -81,7 +81,7 @@ CREATE TABLE Fornecedor
 DROP TABLE IF EXISTS Categoria
 CREATE TABLE Categoria
 (
-	CategoriaId		INT				NOT NULL	IDENTITY(10000001, 1),
+	CategoriaId		INT				NOT NULL	IDENTITY(1, 1),
 	Nome			VARCHAR(255)	NOT NULL,
 	Descricao		VARCHAR(255)	NOT NULL,
 	DataInsercao	DATETIME		NOT NULL,
