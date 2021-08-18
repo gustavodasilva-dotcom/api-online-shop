@@ -13,6 +13,8 @@ AS
 Descrição......: Procedure utilizada para cadastrar produtos.
 Data de criação: 14-08-2021
 **************************************************************************************************************************************/
+		SET NOCOUNT ON;
+		
 		DECLARE @Mensagem VARCHAR(255);
 
 

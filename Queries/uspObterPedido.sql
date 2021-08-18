@@ -9,7 +9,7 @@ AS
 Descrição......: Procedure utilizada para obter um único pedido.
 Data de criação: 16-08-2021
 **************************************************************************************************************************************/
-		SET NOCOUNT OFF;
+		SET NOCOUNT ON;
 
 		DECLARE @Mensagem VARCHAR(255);
 	

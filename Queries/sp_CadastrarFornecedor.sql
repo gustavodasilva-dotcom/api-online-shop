@@ -20,7 +20,7 @@ AS
 Descrição......: Procedure utilizada para cadastrar fornecedores.
 Data de criação: 12-08-2021
 **************************************************************************************************************************************/
-		SET NOCOUNT OFF;
+		SET NOCOUNT ON;
 		
 		DECLARE @EnderecoId	INT;
 		DECLARE @Mensagem	VARCHAR(255);

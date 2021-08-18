@@ -118,7 +118,7 @@ CREATE TABLE Pedido
 	DataCompra		DATETIME	NOT NULL,
 	ClienteId		INT			NOT NULL,
 	DataInsercao	DATETIME	NOT NULL,
-	Excluido		BIT				NOT NULL
+	Excluido		BIT			NOT NULL
 
 	CONSTRAINT PK_PedidoId PRIMARY KEY(PedidoId),
 

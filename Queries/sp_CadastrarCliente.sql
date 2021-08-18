@@ -23,7 +23,7 @@ AS
 Descrição......: Procedure utilizada para cadastrar clientes.
 Data de criação: 10-08-2021
 **************************************************************************************************************************************/
-		SET NOCOUNT OFF;
+		SET NOCOUNT ON;
 
 		DECLARE @IdEndereco		INT;
 		DECLARE @IdInfoContato	INT;

@@ -6,5 +6,6 @@ namespace ApiOnlineShop.Repositories.Interfaces
     public interface IPedidosRepository
     {
         Task<PedidoViewModel> Obter(string query);
+        Task<PedidoViewModel> ExecutarComando(string query);
     }
 }

@@ -1,7 +1,7 @@
 USE OnlineShop
 GO
 
-CREATE PROCEDURE [dbo].[sp_ObterCliente]
+ALTER PROCEDURE [dbo].[sp_ObterCliente]
 	@Cpf	VARCHAR(255)
 AS
 	BEGIN
@@ -9,7 +9,7 @@ AS
 Descrição......: Procedure utilizada para obter os dados de clientes.
 Data de criação: 14-08-2021
 **************************************************************************************************************************************/
-		SET NOCOUNT OFF;
+		SET NOCOUNT ON;
 		
 		DECLARE	@Mensagem VARCHAR(255);
 

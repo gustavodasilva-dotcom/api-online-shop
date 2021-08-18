@@ -10,6 +10,5 @@ namespace ApiOnlineShop.Models.ViewModels
         public string Cpf { get; set; }
         public string Endereco { get; set; }
         public DateTime DataCompra { get; set; }
-
     }
 }

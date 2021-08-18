@@ -21,7 +21,7 @@ AS
 Descrição......: Procedure utilizada para atualizar dados de fornecedores.
 Data de criação: 13-08-2021
 **************************************************************************************************************************************/
-		SET NOCOUNT OFF;
+		SET NOCOUNT ON;
 
 		DECLARE @Mensagem		VARCHAR(255);
 		DECLARE @FornecedorId	INT;

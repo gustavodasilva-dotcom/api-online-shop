@@ -27,5 +27,15 @@ namespace ApiOnlineShop.Repositories
             }
         }
 
+        public async Task<PedidoViewModel> ExecutarComando(string query)
+        {
+            using (IDbConnection db = new SqlConnection(_connectionString))
+            {
+                var pedido = await db.QuerySingleAsync<PedidoViewModel>(query, new { PedidoViewModel = 1 });
+
+                return pedido;
+            }
+        }
+
     }
 }

@@ -9,7 +9,7 @@ AS
 Descrição......: Procedure utilizada para deletar fornecedores.
 Data de criação: 13-08-2021
 **************************************************************************************************************************************/
-		SET NOCOUNT OFF;
+		SET NOCOUNT ON;
 
 		DECLARE @Mensagem		VARCHAR(255);
 		DECLARE @FornecedorId	INT;

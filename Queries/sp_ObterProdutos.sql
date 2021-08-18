@@ -10,7 +10,7 @@ AS
 Descrição......: Procedure utilizada para obter um único produto ou uma lista de produtos.
 Data de criação: 15-08-2021
 **************************************************************************************************************************************/
-		SET NOCOUNT OFF;
+		SET NOCOUNT ON;
 
 		DECLARE @Mensagem VARCHAR(255);
 

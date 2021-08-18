@@ -24,7 +24,7 @@ AS
 Descrição......: Procedure utilizada para atualizar dados de clientes.
 Data de criação: 11-08-2021
 **************************************************************************************************************************************/
-		SET NOCOUNT OFF;
+		SET NOCOUNT ON;
 
 		DECLARE @Mensagem		VARCHAR(255);
 		DECLARE @ClienteId		INT;
