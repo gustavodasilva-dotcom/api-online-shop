@@ -7,5 +7,6 @@ namespace ApiOnlineShop.Repositories.Interfaces
     public interface IDetalhesPedidosRepository
     {
         Task<IEnumerable<DetalhesPedidoViewModel>> Obter(string query);
+        Task<DetalhesPedidoViewModel> ExecutarComando(string query);
     }
 }

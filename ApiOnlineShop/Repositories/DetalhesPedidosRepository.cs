@@ -22,10 +22,21 @@ namespace ApiOnlineShop.Repositories
         {
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
-                var produtos = await db.QueryAsync<DetalhesPedidoViewModel>(query);
+                var detalhesPedidos = await db.QueryAsync<DetalhesPedidoViewModel>(query);
 
-                return produtos;
+                return detalhesPedidos;
             }
         }
+
+        public async Task<DetalhesPedidoViewModel> ExecutarComando(string query)
+        {
+            using (IDbConnection db = new SqlConnection(_connectionString))
+            {
+                var detalhesPedidos = await db.QuerySingleAsync<DetalhesPedidoViewModel>(query);
+
+                return detalhesPedidos;
+            }
+        }
+
     }
 }

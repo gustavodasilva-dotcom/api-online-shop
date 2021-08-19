@@ -1,4 +1,5 @@
-﻿using ApiOnlineShop.Models.ViewModels;
+﻿using ApiOnlineShop.Models.InputModels;
+using ApiOnlineShop.Models.ViewModels;
 using ApiOnlineShop.Repositories.Interfaces;
 using ApiOnlineShop.Services.Interfaces;
 using System.Collections.Generic;
@@ -23,5 +24,15 @@ namespace ApiOnlineShop.Services
 
             return detalhesPedido;
         }
+
+        public async Task<DetalhesPedidoViewModel> Inserir(int id, DetalhesPedidoInputModel detalhesPedidoInsert)
+        {
+            var query = $"[dbo].[uspCadastrarDetalhesPedido] {id}, {detalhesPedidoInsert.ProdutoId}, {detalhesPedidoInsert.Quantidade}";
+
+            var detalhesPedido = await _detalhesPedidosRepository.ExecutarComando(query);
+
+            return detalhesPedido;
+        }
+
     }
 }

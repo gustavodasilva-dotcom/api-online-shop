@@ -1,4 +1,5 @@
-﻿using ApiOnlineShop.Models.ViewModels;
+﻿using ApiOnlineShop.Models.InputModels;
+using ApiOnlineShop.Models.ViewModels;
 using ApiOnlineShop.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -51,5 +52,45 @@ namespace ApiOnlineShop.Controllers
                 return StatusCode(statusCode, mensagem);
             }
         }
+
+        [HttpPost("{pedidoId:int}")]
+        public async Task<ActionResult<DetalhesPedidoViewModel>> Inserir([FromRoute] int pedidoId, [FromBody] DetalhesPedidoInputModel detalhesPedidoInsert)
+        {
+            try
+            {
+                var detalhesPedido = await _detalhesPedidosService.Inserir(pedidoId, detalhesPedidoInsert);
+
+                return StatusCode(201, detalhesPedido);
+            }
+            catch (SqlException ex)
+            {
+                int statusCode;
+                string mensagem;
+
+                if (ex.Message.Contains("Pedido não foi encontrado em sistema."))
+                {
+                    statusCode = 404;
+                    mensagem = "Pedido não foi encontrado em sistema.";
+                }
+                else if (ex.Message.Contains("Produto não foi encontrado em sistema."))
+                {
+                    statusCode = 404;
+                    mensagem = "Produto não foi encontrado em sistema.";
+                }
+                else if (ex.Message.Contains("A quantidade não pode ser igual ou menor a 0."))
+                {
+                    statusCode = 422;
+                    mensagem = "A quantidade não pode ser igual ou menor a 0.";
+                }
+                else
+                {
+                    statusCode = 500;
+                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
+                }
+
+                return StatusCode(statusCode, mensagem);
+            }
+        }
+
     }
 }
