@@ -1,7 +1,9 @@
-﻿using ApiOnlineShop.Models.InputModels;
+﻿using ApiOnlineShop.CustomExceptions;
+using ApiOnlineShop.Models.InputModels;
 using ApiOnlineShop.Models.ViewModels;
 using ApiOnlineShop.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -50,6 +52,25 @@ namespace ApiOnlineShop.Controllers
                 }
 
                 return StatusCode(statusCode, mensagem);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Inserir([FromBody] ProdutoInputModel produto)
+        {
+            try
+            {
+                var produtoId = await _produtosService.Inserir(produto);
+
+                return Created("Criado.", _produtosService.Obter(produtoId, produto.CategoriaId));
+            }
+            catch (UnprocessableEntityException e)
+            {
+                return UnprocessableEntity(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, $"O seguinte erro ocorreu: {e.Message}");
             }
         }
     }

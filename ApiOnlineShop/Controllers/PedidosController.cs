@@ -1,8 +1,9 @@
-﻿using ApiOnlineShop.Models.InputModels;
+﻿using ApiOnlineShop.CustomExceptions;
+using ApiOnlineShop.Models.InputModels;
 using ApiOnlineShop.Models.ViewModels;
 using ApiOnlineShop.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Data.SqlClient;
+using System;
 using System.Threading.Tasks;
 
 namespace ApiOnlineShop.Controllers
@@ -23,27 +24,16 @@ namespace ApiOnlineShop.Controllers
         {
             try
             {
-                var pedido = await _pedidosService.Obter(pedidoId);
-
-                return StatusCode(200, pedido);
+                return Ok(await _pedidosService.Obter(pedidoId));
             }
-            catch (SqlException ex)
+            catch (NotFoundException e)
             {
-                int statusCode;
-                string mensagem;
-
-                if (ex.Message.Contains("O pedido não foi encontrado na base de dados."))
-                {
-                    statusCode = 404;
-                    mensagem = "O pedido não foi encontrado na base de dados.";
-                } else
-                {
-                    statusCode = 500;
-                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
-                }
-
-                return StatusCode(statusCode, mensagem);
-            }   
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, $"O seguinte erro ocorreu: {e.Message}");
+            }
         }
 
         [HttpPost]
@@ -51,38 +41,18 @@ namespace ApiOnlineShop.Controllers
         {
             try
             {
-                var pedido = await _pedidosService.InserirCabecalho(pedidoInsert);
+                var pedidoID = await _pedidosService.Inserir(pedidoInsert);
 
-                return StatusCode(201, pedido);
+                return Created($"Pedido criado com sucesso no id {pedidoID}.", await _pedidosService.Obter(pedidoID));
             }
-            catch (SqlException ex)
+            catch (NotFoundException e)
             {
-                int statusCode;
-                string mensagem;
-
-                if (ex.Message.Contains("O id do cliente não pode ser nulo ou zero."))
-                {
-                    statusCode = 422;
-                    mensagem = "O id do cliente não pode ser nulo ou zero.";
-                }
-                else if (ex.Message.Contains("Cliente não encontrado em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Cliente não encontrado em sistema.";
-                }
-                else if (ex.Message.Contains("A data da compra não pode ser maior que a data de hoje."))
-                {
-                    statusCode = 422;
-                    mensagem = "A data da compra não pode ser maior que a data de hoje.";
-                } else
-                {
-                    statusCode = 500;
-                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
-                }
-
-                return StatusCode(statusCode, mensagem);
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, $"O seguinte erro ocorreu: {e.Message}");
             }
         }
-
     }
 }

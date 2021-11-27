@@ -1,4 +1,4 @@
-﻿namespace ApiOnlineShop.Entities
+﻿namespace ApiOnlineShop.Entities.Entities
 {
     public class InformacoesContato : Entidade
     {

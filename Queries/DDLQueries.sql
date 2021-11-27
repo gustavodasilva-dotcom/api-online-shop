@@ -111,6 +111,21 @@ CREATE TABLE Produto
 	REFERENCES Fornecedor(FornecedorId)
 );
 
+DROP TABLE IF EXISTS ProdutoImagem
+CREATE TABLE ProdutoImagem
+(
+	 ProdutoImagemId	INT				NOT NULL	IDENTITY(10000001, 1)
+	,Base64				VARCHAR(MAX)	NOT NULL
+	,ProdutoId			INT				NOT NULL
+	,DataInsercao		DATETIME		NOT NULL
+	,Excluido			BIT				NOT NULL
+
+	CONSTRAINT PK_ProdutoImagemId PRIMARY KEY(ProdutoImagemId)
+
+	CONSTRAINT FK_ProdutoImagem_ProdutoId FOREIGN KEY(ProdutoImagemId)
+	REFERENCES Produto(ProdutoId)
+);
+
 DROP TABLE IF EXISTS Pedido;
 CREATE TABLE Pedido
 (

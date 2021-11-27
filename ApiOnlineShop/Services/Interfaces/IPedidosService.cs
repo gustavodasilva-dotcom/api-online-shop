@@ -7,6 +7,7 @@ namespace ApiOnlineShop.Services.Interfaces
     public interface IPedidosService
     {
         Task<PedidoViewModel> Obter(int id);
-        Task<PedidoViewModel> InserirCabecalho(PedidoInputModel pedidoInsert);
+
+        Task<int> Inserir(PedidoInputModel pedido);
     }
 }

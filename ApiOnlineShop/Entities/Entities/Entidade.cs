@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ApiOnlineShop.Entities
+namespace ApiOnlineShop.Entities.Entities
 {
     public class Entidade
     {

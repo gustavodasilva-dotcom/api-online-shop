@@ -1,7 +1,11 @@
-﻿using ApiOnlineShop.Models.InputModels;
+﻿using ApiOnlineShop.CustomExceptions;
+using ApiOnlineShop.Entities.Entities;
+using ApiOnlineShop.Models.InputModels;
 using ApiOnlineShop.Models.ViewModels;
 using ApiOnlineShop.Repositories.Interfaces;
 using ApiOnlineShop.Services.Interfaces;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ApiOnlineShop.Services
@@ -17,20 +21,104 @@ namespace ApiOnlineShop.Services
 
         public async Task<PedidoViewModel> Obter(int id)
         {
-            var query = $"[dbo].[uspObterPedido] {id}";
+            try
+            {
+                var detalhesPedido = new List<DetalhesPedidoViewModel>();
 
-            var pedido = await _pedidosRepository.Obter(query);
+                var pedido = await _pedidosRepository.Obter(id);
 
-            return pedido;
+                if (pedido == null)
+                    throw new NotFoundException($"O pedido {id} não foi encontrado na base de dados.");
+
+                var items = await _pedidosRepository.ObterItems(id);
+
+                if (items == null)
+                    throw new NotFoundException($"O pedido {id} não possui items.");
+
+                foreach (var item in items)
+                {
+                    detalhesPedido.Add(new DetalhesPedidoViewModel
+                    {
+                        PedidoId = item.PedidoID,
+                        ProdutoId = item.ProdutoID,
+                        Quantidade = item.Quantidade,
+                        Nome = item.Nome,
+                        Medida = item.Medida,
+                        Preco = item.Preco,
+                        Fornecedor = item.Fornecedor
+                    });
+                }
+
+                return new PedidoViewModel
+                {
+                    PedidoId = pedido.PedidoID,
+                    ClienteId = pedido.ClienteID,
+                    Cliente = pedido.Cliente,
+                    Cpf = pedido.Cpf,
+                    Endereco = new EnderecoViewModel
+                    {
+                        Cep = pedido.Cep,
+                        Logradouro = pedido.Logradouro,
+                        Complemento = pedido.Complemento,
+                        Bairro = pedido.Bairro,
+                        Localidade = pedido.Localidade,
+                        Uf = pedido.Uf,
+                        Pais = pedido.Pais
+                    },
+                    DetalhesPedido = detalhesPedido
+                };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public async Task<PedidoViewModel> InserirCabecalho(PedidoInputModel pedidoInsert)
+        public async Task<int> Inserir(PedidoInputModel pedido)
         {
-            var query = $"[dbo].[uspCadastrarPedido] '{pedidoInsert.DataCompra}', {pedidoInsert.ClienteId}";
+            try
+            {
+                var detalhesInsert = new List<DetalhesPedido>();
 
-            var produto = await _pedidosRepository.ExecutarComando(query);
+                foreach (var detalhe in pedido.DetalhesPedido)
+                {
+                    detalhesInsert.Add(new DetalhesPedido
+                    {
+                        Produto = new Produto
+                        {
+                            Codigo = detalhe.ProdutoId,
+                            Quantidade = detalhe.Quantidade
+                        }
+                    });
+                };
 
-            return produto;
+                var pedidoInsert = new Pedido
+                {
+                    DataCompra = pedido.DataCompra,
+                    Cliente = new Cliente
+                    {
+                        Codigo = pedido.ClienteId
+                    },
+                    DetalhesPedido = detalhesInsert
+                };
+
+                var pedidoID = await _pedidosRepository.InserirPedido(pedidoInsert);
+
+                if (pedidoID != 0)
+                {
+                    await _pedidosRepository.InserirDetalhesPedido(pedidoInsert, pedidoID);
+
+                    return pedidoID;
+                }
+                else
+                {
+                    throw new Exception("Ocorreu um erro ao inserir o pedido.");
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
