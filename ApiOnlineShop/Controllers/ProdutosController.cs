@@ -5,7 +5,6 @@ using ApiOnlineShop.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 
 namespace ApiOnlineShop.Controllers
@@ -21,37 +20,41 @@ namespace ApiOnlineShop.Controllers
             _produtosService = produtosService;
         }
 
-        [HttpGet("{id:int}/{tipo:int}")]
-        public async Task<ActionResult<IEnumerable<ProdutoViewModel>>> ObterLista([FromRoute] int id, [FromRoute] int tipo)
+        [HttpGet("{categoriaId:int}")]
+        public async Task<ActionResult<IEnumerable<ProdutoViewModel>>> Obter([FromRoute] int categoriaId)
         {
             try
             {
-                var produtos = await _produtosService.Obter(id, tipo);
-
-                return StatusCode(200, produtos);
+                return Ok(await _produtosService.Obter(categoriaId));
             }
-            catch (SqlException ex)
+            catch (NotFoundException e)
             {
-                int statusCode;
-                string mensagem;
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, $"O seguinte erro ocorreu: {e.Message}");
+            }
+        }
 
-                if (ex.Message.Contains("O tipo retorno informado não está especificado."))
-                {
-                    statusCode = 404;
-                    mensagem = "O tipo retorno informado não está especificado.";
-                }
-                else if (ex.Message.Contains("O id informado não corresponde a nenhum produto."))
-                {
-                    statusCode = 404;
-                    mensagem = "O id informado não corresponde a nenhum produto.";
-                }
-                else
-                {
-                    statusCode = 500;
-                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
-                }
-
-                return StatusCode(statusCode, mensagem);
+        [HttpGet("{produtoId:int}/{categoriaId:int}")]
+        public async Task<ActionResult<ProdutoViewModel>> Obter([FromRoute] int produtoId, [FromRoute] int categoriaId)
+        {
+            try
+            {
+                return Ok(await _produtosService.Obter(produtoId, categoriaId));
+            }
+            catch (UnprocessableEntityException e)
+            {
+                return UnprocessableEntity(e.Message);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, $"O seguinte erro ocorreu: {e.Message}");
             }
         }
 
@@ -62,11 +65,15 @@ namespace ApiOnlineShop.Controllers
             {
                 var produtoId = await _produtosService.Inserir(produto);
 
-                return Created("Criado.", _produtosService.Obter(produtoId, produto.CategoriaId));
+                return Created($"Produto criado com sucesso no id {produtoId}.", _produtosService.Obter(produtoId, produto.CategoriaId));
             }
             catch (UnprocessableEntityException e)
             {
                 return UnprocessableEntity(e.Message);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
             }
             catch (Exception e)
             {

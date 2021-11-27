@@ -11,7 +11,6 @@ C:\Users\gusta\source\repos\ApiOnlineShop\ApiOnlineShop\bin\Debug\net5.0\Microso
 C:\Users\gusta\source\repos\ApiOnlineShop\ApiOnlineShop\bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\gusta\source\repos\ApiOnlineShop\ApiOnlineShop\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\gusta\source\repos\ApiOnlineShop\ApiOnlineShop\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
-C:\Users\gusta\source\repos\ApiOnlineShop\ApiOnlineShop\obj\Debug\net5.0\ApiOnlineShop.csproj.AssemblyReference.cache
 C:\Users\gusta\source\repos\ApiOnlineShop\ApiOnlineShop\obj\Debug\net5.0\ApiOnlineShop.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\gusta\source\repos\ApiOnlineShop\ApiOnlineShop\obj\Debug\net5.0\ApiOnlineShop.AssemblyInfoInputs.cache
 C:\Users\gusta\source\repos\ApiOnlineShop\ApiOnlineShop\obj\Debug\net5.0\ApiOnlineShop.AssemblyInfo.cs

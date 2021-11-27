@@ -1,4 +1,5 @@
 ﻿using ApiOnlineShop.Entities.Entities;
+using ApiOnlineShop.Entities.Table;
 using ApiOnlineShop.Models.ViewModels;
 using ApiOnlineShop.Repositories.Interfaces;
 using Dapper;
@@ -20,13 +21,82 @@ namespace ApiOnlineShop.Repositories
             _connectionString = configuration.GetConnectionString("Default");
         }
 
-        public async Task<IEnumerable<ProdutoViewModel>> Obter(string query)
+        public async Task<IEnumerable<ProdutoTable>> Obter(int categoriaId)
         {
-            using (IDbConnection db = new SqlConnection(_connectionString))
+            try
             {
-                var produtos = await db.QueryAsync<ProdutoViewModel>(query);
+                using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+                    #region SQL
 
-                return produtos;
+                    var query =
+                    $@" SELECT		 P.ProdutoId
+                        			,P.Nome
+                        			,P.Medida
+                        			,P.Preco
+                        			,PI.Base64
+                                    ,C.CategoriaId
+                        			,C.Nome			AS 'Categoria'
+                        			,C.Descricao	AS 'Descricao'
+                        			,F.RazaoSocial	AS 'Fornecedor'
+                        			,F.Cnpj			AS 'Cnpj'  
+                        FROM		Produto			P
+                        INNER JOIN	Fornecedor		F	ON P.FornecedorId = F.FornecedorId
+                        INNER JOIN	Categoria		C	ON P.CategoriaId  = C.CategoriaId
+                        LEFT  JOIN	ProdutoImagem	PI	ON P.ProdutoId	  = PI.ProdutoId
+                        WHERE		C.CategoriaId = {categoriaId}
+                         AND		C.Excluido = 0
+                         AND		P.Excluido = 0
+                         AND		F.Excluido = 0;;";
+
+                    #endregion SQL
+
+                    return await db.QueryAsync<ProdutoTable>(query);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<ProdutoTable> Obter(int produtoId, int categoriaId)
+        {
+            try
+            {
+                using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+                    #region SQL
+
+                    var query =
+                    $@"SELECT		 P.ProdutoId
+                        			,P.Nome
+                        			,P.Medida
+                        			,P.Preco
+                        			,PI.Base64
+                        			,C.CategoriaId
+                        			,C.Nome			AS 'Categoria'
+                        			,C.Descricao	AS 'Descricao'
+                        			,F.RazaoSocial	AS 'Fornecedor'
+                        			,F.Cnpj			AS 'Cnpj'  
+                        FROM		Produto			P
+                        INNER JOIN	Fornecedor		F	ON P.FornecedorId = F.FornecedorId
+                        INNER JOIN	Categoria		C	ON P.CategoriaId  = C.CategoriaId
+                        LEFT  JOIN	ProdutoImagem	PI	ON P.ProdutoId	  = PI.ProdutoId
+                        WHERE		P.ProdutoId   = {produtoId}
+                         AND        C.CategoriaId = {categoriaId}
+                         AND		C.Excluido    = 0
+                         AND		P.Excluido    = 0
+                         AND		F.Excluido    = 0;";
+
+                    #endregion SQL
+
+                    return await db.QueryFirstOrDefaultAsync<ProdutoTable>(query, new { produtoId });
+                }
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 

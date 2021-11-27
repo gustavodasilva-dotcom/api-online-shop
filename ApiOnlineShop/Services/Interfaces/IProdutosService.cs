@@ -7,7 +7,9 @@ namespace ApiOnlineShop.Services.Interfaces
 {
     public interface IProdutosService
     {
-        Task<IEnumerable<ProdutoViewModel>> Obter(int id, int tipo);
+        Task<IEnumerable<ProdutoViewModel>> Obter(int categoriaId);
+
+        Task<ProdutoViewModel> Obter(int produtoId, int categoriaId);
 
         Task<int> Inserir(ProdutoInputModel produto);
     }
