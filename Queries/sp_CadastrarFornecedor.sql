@@ -36,24 +36,42 @@ Data de criação: 12-08-2021
 
 		PRINT 'Inserindo na tabela Endereco: ';
 
-		BEGIN TRANSACTION
+		DECLARE @EnderecoID INT;
 
-			INSERT INTO Endereco
-			VALUES
-			(
-				@Cep,
-				@Logradouro,
-				@Numero,
-				@Complemento,
-				@Bairro,
-				@Localidade,
-				@Uf,
-				@Pais,
-				GETDATE(),
-				0
-			)
-		
-		COMMIT TRANSACTION
+		BEGIN TRANSACTION;
+
+			BEGIN TRY
+
+				INSERT INTO Endereco
+				VALUES
+				(
+					@Cep,
+					@Logradouro,
+					@Numero,
+					@Complemento,
+					@Bairro,
+					@Localidade,
+					@Uf,
+					@Pais,
+					GETDATE(),
+					0
+				);
+
+			END TRY
+
+			BEGIN CATCH
+
+				IF @@TRANCOUNT > 0
+					ROLLBACK TRANSACTION;
+
+			END CATCH;
+
+		IF @@TRANCOUNT > 0
+			COMMIT TRANSACTION;
+
+		SET @EnderecoID = @@IDENTITY;
+
+		SELECT @EnderecoID;
 
 		PRINT 'Inseriu na tabela de Endereco.';
 
@@ -65,21 +83,35 @@ Data de criação: 12-08-2021
 
 		PRINT 'Inserindo na tabela de Fornecedor: ';
 
-		BEGIN TRANSACTION
 
-			INSERT INTO Fornecedor
-			VALUES
-			(
-				@NomeFantasia,
-				@RazaoSocial,
-				@Cnpj,
-				@Contato,
-				@EnderecoId,
-				GETDATE(),
-				0
-			)
 
-		COMMIT TRANSACTION
+		BEGIN TRANSACTION;
+
+			BEGIN TRY
+
+				INSERT INTO Fornecedor
+				VALUES
+				(
+					@NomeFantasia,
+					@RazaoSocial,
+					@Cnpj,
+					@Contato,
+					@EnderecoId,
+					GETDATE(),
+					0
+				);
+
+			END TRY
+
+			BEGIN CATCH
+
+				IF @@TRANCOUNT > 0
+					ROLLBACK TRANSACTION;
+
+			END CATCH;
+
+		IF @@TRANCOUNT > 0
+			COMMIT TRANSACTION
 
 		PRINT 'Inseriu na tabela de Fornecedor.';
 

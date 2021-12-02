@@ -1,10 +1,12 @@
-﻿using ApiOnlineShop.Models.ViewModels;
-using ApiOnlineShop.Repositories.Interfaces;
+﻿using System;
 using Dapper;
-using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using ApiOnlineShop.Entities.Table;
+using ApiOnlineShop.Entities.Entities;
+using Microsoft.Extensions.Configuration;
+using ApiOnlineShop.Repositories.Interfaces;
 
 namespace ApiOnlineShop.Repositories
 {
@@ -17,23 +19,139 @@ namespace ApiOnlineShop.Repositories
             _connectionString = configuration.GetConnectionString("Default");
         }
 
-        public async Task<FornecedorViewModel> Obter(string query)
+        public async Task<FornecedorTable> Obter(string cnpj)
         {
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
-                var fornecedor = db.QueryFirstOrDefaultAsync<FornecedorViewModel>(query);
+                #region SQL
 
-                return await fornecedor;
+                var query =
+                @"SELECT		 NomeFantasia
+		            			,RazaoSocial
+		            			,Cnpj
+		            			,Contato
+		            			,Cep
+		            			,Logradouro
+		            			,Numero
+		            			,Complemento
+		            			,Bairro
+		            			,Localidade
+		            			,Uf
+		            			,Pais
+		            FROM		Fornecedor	F
+		            INNER JOIN	Endereco	E ON F.EnderecoId = E.EnderecoId
+		            WHERE		Cnpj = @cnpj
+                      AND       F.Excluido = 0
+                      AND       E.Excluido = 0";
+
+                #endregion SQL
+
+                return await db.QueryFirstOrDefaultAsync<FornecedorTable>(query, new { cnpj });
             }
         }
 
-        public async Task<FornecedorViewModel> ExecutarComando(string query)
+        public async Task<int> Inserir(Endereco endereco)
         {
-            using (IDbConnection db = new SqlConnection(_connectionString))
+			try
             {
-                var fornecedor = db.QuerySingleAsync<FornecedorViewModel>(query, new { FornecedorViewModel = 1 });
+				using (IDbConnection db = new SqlConnection(_connectionString))
+				{
+					#region SQL
 
-                return await fornecedor;
+					var query =
+					$@"	DECLARE @EnderecoID INT;
+
+						BEGIN TRANSACTION;
+
+							BEGIN TRY
+
+								INSERT INTO Endereco
+								VALUES
+								(
+									 '{endereco.Cep}'
+									,'{endereco.Logradouro}'
+									,'{endereco.Numero}'
+									,'{endereco.Complemento}'
+									,'{endereco.Bairro}'
+									,'{endereco.Localidade}'
+									,'{endereco.Uf}'
+									,'{endereco.Pais}'
+									,GETDATE()
+									,0
+								);
+
+							END TRY
+
+							BEGIN CATCH
+
+								IF @@TRANCOUNT > 0
+									ROLLBACK TRANSACTION;
+
+							END CATCH;
+
+						IF @@TRANCOUNT > 0
+							COMMIT TRANSACTION;
+
+						SET @EnderecoID = @@IDENTITY;
+
+						SELECT @EnderecoID;";
+
+					#endregion SQL
+
+					return await db.ExecuteScalarAsync<int>(query);
+				}
+			}
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+		public async Task Inserir(Fornecedor fornecedor, int enderecoID)
+        {
+			try
+            {
+				using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+					#region SQL
+
+					var query =
+					$@" BEGIN TRANSACTION;
+
+							BEGIN TRY
+
+								INSERT INTO Fornecedor
+								VALUES
+								(
+									 '{fornecedor.NomeFantasia}'
+									,'{fornecedor.RazaoSocial}'
+									,'{fornecedor.Cnpj}'
+									,'{fornecedor.Contato}'
+									,{enderecoID}
+									,GETDATE()
+									,0
+								);
+
+							END TRY
+
+							BEGIN CATCH
+
+								IF @@TRANCOUNT > 0
+									ROLLBACK TRANSACTION;
+
+							END CATCH;
+
+						IF @@TRANCOUNT > 0
+							COMMIT TRANSACTION;";
+
+					#endregion SQL
+
+					await db.ExecuteAsync(query);
+				}
+			}
+			catch (Exception)
+            {
+				throw;
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using ApiOnlineShop.Models.InputModels;
+﻿using ApiOnlineShop.CustomExceptions;
+using ApiOnlineShop.Models.InputModels;
 using ApiOnlineShop.Models.ViewModels;
 using ApiOnlineShop.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -24,27 +25,15 @@ namespace ApiOnlineShop.Controllers
         {
             try
             {
-                var fornecedor = await _fornecedoresServices.Obter(cnpj);
-
-                return StatusCode(200, fornecedor);
+                return Ok(await _fornecedoresServices.Obter(cnpj));
             }
-            catch (SqlException ex)
+            catch (NotFoundException e)
             {
-                int statusCode;
-                string mensagem;
-
-                if (ex.Message.Contains("Fornecedor não consta em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Fornecedor não consta em sistema.";
-                }
-                else
-                {
-                    statusCode = 500;
-                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
-                }
-                
-                return StatusCode(statusCode, mensagem);
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, $"O seguinte erro ocorreu: {e.Message}");
             }
         }
 
@@ -53,29 +42,24 @@ namespace ApiOnlineShop.Controllers
         {
             try
             {
-                var fornecedor = await _fornecedoresServices.Inserir(fornecedorInsert);
+                var valido = _fornecedoresServices.ValidarDados(fornecedorInsert);
 
-                return StatusCode(201, fornecedor);
+                if (valido.MensagensDeErro.Count > 0)
+                    return BadRequest(valido);
+                
+                return Created("Fornecedor cadastro com sucesso!", await _fornecedoresServices.Inserir(fornecedorInsert));
             }
-            catch (SqlException ex)
+            catch (NotFoundException e)
             {
-                int statusCode;
-                string mensagem;
-
-                if (ex.Message.Contains("já consta em sistema."))
-                {
-                    statusCode = 409;
-                    mensagem = "O CNPJ informado já consta em sistema.";
-                } else
-                {
-                    statusCode = 500;
-                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
-                }
-
-                return StatusCode(statusCode, mensagem);
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, $"O seguinte erro ocorreu: {e.Message}");
             }
         }
 
+        /*
         [HttpPut("{cnpj}")]
         public async Task<ActionResult<FornecedorViewModel>> Atualizar([FromRoute] string cnpj, [FromBody] FornecedorInputModel fornecedorUpdate)
         {
@@ -114,6 +98,7 @@ namespace ApiOnlineShop.Controllers
                 return StatusCode(statusCode, mensagem);
             }
         }
+        */
 
         [HttpDelete("{cnpj}")]
         public async Task<ActionResult> Deletar([FromRoute] string cnpj)

@@ -38,6 +38,9 @@ namespace ApiOnlineShop
             services.AddScoped<IDetalhesPedidosService, DetalhesPedidosService>();
             services.AddScoped<IDetalhesPedidosRepository, DetalhesPedidosRepository>();
 
+            services.AddScoped<IValidacoesService, ValidacoesService>();
+            services.AddScoped<IValidacoesRepository, ValidacoesRepository>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
