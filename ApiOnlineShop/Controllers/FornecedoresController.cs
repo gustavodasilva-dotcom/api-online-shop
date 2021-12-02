@@ -1,11 +1,10 @@
-﻿using ApiOnlineShop.CustomExceptions;
-using ApiOnlineShop.Models.InputModels;
-using ApiOnlineShop.Models.ViewModels;
-using ApiOnlineShop.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Data.SqlClient;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using ApiOnlineShop.CustomExceptions;
+using ApiOnlineShop.Models.ViewModels;
+using ApiOnlineShop.Models.InputModels;
+using ApiOnlineShop.Services.Interfaces;
 
 namespace ApiOnlineShop.Controllers
 {
@@ -53,52 +52,37 @@ namespace ApiOnlineShop.Controllers
             {
                 return NotFound(e.Message);
             }
+            catch (ConflictException e)
+            {
+                return Conflict(e.Message);
+            }
             catch (Exception e)
             {
                 return StatusCode(500, $"O seguinte erro ocorreu: {e.Message}");
             }
         }
 
-        /*
         [HttpPut("{cnpj}")]
         public async Task<ActionResult<FornecedorViewModel>> Atualizar([FromRoute] string cnpj, [FromBody] FornecedorInputModel fornecedorUpdate)
         {
             try
             {
-                var fornecedor = await _fornecedoresServices.Atualizar(cnpj, fornecedorUpdate);
+                var valido = _fornecedoresServices.ValidarDados(cnpj, fornecedorUpdate);
 
-                return StatusCode(200, fornecedor);
+                if (valido.MensagensDeErro.Count > 0)
+                    return BadRequest(valido);
+
+                return Ok(await _fornecedoresServices.Atualizar(cnpj, fornecedorUpdate));
             }
-            catch (SqlException ex)
+            catch (NotFoundException e)
             {
-                int statusCode;
-                string mensagem;
-
-                if (ex.Message.Contains("não consta em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "O CNPJ informado não consta em sistema.";
-                }
-                else if (ex.Message.Contains("Fornecedor não encontrado em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Fornecedor não encontrado em sistema.";
-                }
-                else if (ex.Message.Contains("Endereco não encontrado em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Endereco não encontrado em sistema.";
-                }
-                else
-                {
-                    statusCode = 500;
-                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
-                }
-
-                return StatusCode(statusCode, mensagem);
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, $"O seguinte erro ocorreu: {e.Message}");
             }
         }
-        */
 
         [HttpDelete("{cnpj}")]
         public async Task<ActionResult> Deletar([FromRoute] string cnpj)
@@ -107,30 +91,15 @@ namespace ApiOnlineShop.Controllers
             {
                 await _fornecedoresServices.Deletar(cnpj);
 
-                return StatusCode(200, "Fornecedor excluído com sucesso!");
+                return Ok($"Fornecedor {cnpj} excluído com sucesso!");
             }
-            catch (SqlException ex)
+            catch (NotFoundException e)
             {
-                int statusCode;
-                string mensagem;
-
-                if (ex.Message.Contains("Fornecedor não consta em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Fornecedor não consta em sistema.";
-                }
-                else if (ex.Message.Contains("Endereco não consta em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Endereco não consta em sistema.";
-                }
-                else
-                {
-                    statusCode = 500;
-                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
-                }
-
-                return StatusCode(statusCode, mensagem);
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, $"O seguinte erro ocorreu: {e.Message}");
             }
         }
     }

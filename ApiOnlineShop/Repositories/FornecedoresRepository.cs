@@ -26,18 +26,20 @@ namespace ApiOnlineShop.Repositories
                 #region SQL
 
                 var query =
-                @"SELECT		 NomeFantasia
-		            			,RazaoSocial
-		            			,Cnpj
-		            			,Contato
-		            			,Cep
-		            			,Logradouro
-		            			,Numero
-		            			,Complemento
-		            			,Bairro
-		            			,Localidade
-		            			,Uf
-		            			,Pais
+                @"SELECT		 F.FornecedorId
+								,F.NomeFantasia
+		            			,F.RazaoSocial
+		            			,F.Cnpj
+		            			,F.Contato
+								,E.EnderecoId
+		            			,E.Cep
+		            			,E.Logradouro
+		            			,E.Numero
+		            			,E.Complemento
+		            			,E.Bairro
+		            			,E.Localidade
+		            			,E.Uf
+		            			,E.Pais
 		            FROM		Fornecedor	F
 		            INNER JOIN	Endereco	E ON F.EnderecoId = E.EnderecoId
 		            WHERE		Cnpj = @cnpj
@@ -155,13 +157,165 @@ namespace ApiOnlineShop.Repositories
             }
         }
 
-        public async Task ExecutarComandoSemRetorno(string query)
+        public async Task Atualizar(Endereco endereco)
         {
-            using (IDbConnection db = new SqlConnection(_connectionString))
+			try
             {
-                await db.ExecuteAsync(query);
+				using (IDbConnection db = new SqlConnection(_connectionString))
+				{
+					#region SQL
+
+					var query =
+					$@" BEGIN TRANSACTION;
+
+							BEGIN TRY
+
+								UPDATE	Endereco
+								SET
+										 Cep			= '{endereco.Cep}'
+										,Logradouro		= '{endereco.Logradouro}'
+										,Numero			= '{endereco.Numero}'
+										,Complemento	= '{endereco.Complemento}'
+										,Bairro			= '{endereco.Bairro}'
+										,Localidade		= '{endereco.Localidade}'
+										,Uf				= '{endereco.Uf}'
+										,Pais			= '{endereco.Pais}'
+								WHERE	EnderecoId		= {endereco.Codigo}
+
+							END TRY
+
+							BEGIN CATCH
+
+								IF @@TRANCOUNT > 0
+									ROLLBACK TRANSACTION;
+
+							END CATCH;
+
+						IF @@TRANCOUNT > 0
+							COMMIT TRANSACTION;";
+
+					#endregion SQL
+
+					await db.ExecuteAsync(query);
+				}
+			}
+            catch (Exception)
+            {
+				throw;
             }
         }
 
+		public async Task Atualizar(Fornecedor fornecedor)
+        {
+			try
+            {
+				using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+					#region SQL
+
+					var query =
+					$@"	BEGIN TRANSACTION;
+
+							BEGIN TRY
+
+								UPDATE	Fornecedor
+								SET
+										 NomeFantasia	= '{fornecedor.NomeFantasia}'
+										,RazaoSocial	= '{fornecedor.RazaoSocial}'
+										,Cnpj			= '{fornecedor.Cnpj}'
+										,Contato		= '{fornecedor.Contato}'
+								WHERE	FornecedorId	= {fornecedor.Codigo};
+
+							END TRY
+
+							BEGIN CATCH
+
+								IF @@TRANCOUNT > 0
+									ROLLBACK TRANSACTION;
+
+							END CATCH;
+
+						IF @@TRANCOUNT > 0
+							COMMIT TRANSACTION;";
+
+					#endregion SQL
+
+					await db.ExecuteAsync(query);
+				}
+            }
+			catch (Exception)
+            {
+				throw;
+            }
+        }
+
+		public async Task Deletar(FornecedorTable fornecedor)
+		{
+			try
+			{
+				using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+					#region SQL
+
+					var query =
+					$@"	BEGIN TRANSACTION;
+
+						BEGIN TRY
+
+							UPDATE	Endereco
+							SET
+									Excluido	= 1
+							WHERE	EnderecoId	= {fornecedor.EnderecoId};
+
+						END TRY
+
+						BEGIN CATCH
+
+							IF @@TRANCOUNT > 0
+								ROLLBACK TRANSACTION;
+
+						END CATCH;
+
+					IF @@TRANCOUNT > 0
+						COMMIT TRANSACTION;";
+
+					#endregion SQL
+
+					await db.ExecuteAsync(query);
+
+					#region SQL
+
+					query =
+					$@"	BEGIN TRANSACTION;
+
+							BEGIN TRY
+
+								UPDATE	Fornecedor
+								SET
+										Excluido		= 1
+								WHERE	FornecedorId	= {fornecedor.FornecedorId};
+
+							END TRY
+
+							BEGIN CATCH
+
+								IF @@TRANCOUNT > 0
+									ROLLBACK TRANSACTION;
+
+							END CATCH;
+
+						IF @@TRANCOUNT > 0
+							COMMIT TRANSACTION;";
+
+					#endregion SQL
+
+					await db.ExecuteAsync(query);
+				}
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+		}
     }
 }

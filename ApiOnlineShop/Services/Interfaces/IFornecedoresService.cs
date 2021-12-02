@@ -1,6 +1,6 @@
-﻿using ApiOnlineShop.Models.InputModels;
+﻿using System.Threading.Tasks;
 using ApiOnlineShop.Models.ViewModels;
-using System.Threading.Tasks;
+using ApiOnlineShop.Models.InputModels;
 
 namespace ApiOnlineShop.Services.Interfaces
 {
@@ -10,10 +10,12 @@ namespace ApiOnlineShop.Services.Interfaces
         
         Task<FornecedorViewModel> Inserir(FornecedorInputModel fornecedor);
         
-        //Task<FornecedorViewModel> Atualizar(string cnpj, FornecedorInputModel fornecedorUpdate);
+        Task<FornecedorViewModel> Atualizar(string cnpj, FornecedorInputModel fornecedor);
         
         Task Deletar(string cnpj);
 
         ErroViewModel ValidarDados(FornecedorInputModel model);
+
+        ErroViewModel ValidarDados(string cnpj, FornecedorInputModel model);
     }
 }

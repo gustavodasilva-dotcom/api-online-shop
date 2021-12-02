@@ -1,6 +1,6 @@
-﻿using ApiOnlineShop.Entities.Table;
+﻿using System.Threading.Tasks;
+using ApiOnlineShop.Entities.Table;
 using ApiOnlineShop.Entities.Entities;
-using System.Threading.Tasks;
 
 namespace ApiOnlineShop.Repositories.Interfaces
 {
@@ -12,6 +12,10 @@ namespace ApiOnlineShop.Repositories.Interfaces
 
         Task Inserir(Fornecedor fornecedor, int enderecoID);
 
-        Task ExecutarComandoSemRetorno(string query);
+        Task Atualizar(Endereco endereco);
+
+        Task Atualizar(Fornecedor fornecedor);
+
+        Task Deletar(FornecedorTable fornecedor);
     }
 }
