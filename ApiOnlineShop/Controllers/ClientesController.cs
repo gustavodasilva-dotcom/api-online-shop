@@ -1,9 +1,10 @@
-﻿using ApiOnlineShop.Models.InputModels;
-using ApiOnlineShop.Models.ViewModels;
-using ApiOnlineShop.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using System.Data.SqlClient;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using ApiOnlineShop.CustomExceptions;
+using ApiOnlineShop.Models.ViewModels;
+using ApiOnlineShop.Models.InputModels;
+using ApiOnlineShop.Services.Interfaces;
 
 namespace ApiOnlineShop.Controllers
 {
@@ -23,27 +24,15 @@ namespace ApiOnlineShop.Controllers
         {
             try
             {
-                var cliente = await _clientesService.Obter(cpf);
-
-                return StatusCode(200, cliente);
+                return Ok(await _clientesService.Obter(cpf));
             }
-            catch (SqlException ex)
+            catch (NotFoundException e)
             {
-                int statusCode;
-                string mensagem;
-
-                if (ex.Message.Contains("Cliente não consta em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Cliente não consta em sistema.";
-                }
-                else
-                {
-                    statusCode = 500;
-                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
-                }
-
-                return StatusCode(statusCode, mensagem);
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -52,27 +41,19 @@ namespace ApiOnlineShop.Controllers
         {
             try
             {
-                var cliente = await _clientesService.Inserir(clienteInsert);
-
-                return StatusCode(201, cliente);
+                return Created("Cliente cadastrado com sucesso!", await _clientesService.Inserir(clienteInsert));
             }
-            catch (SqlException ex)
+            catch (ConflictException e)
             {
-                int statusCode;
-                string mensagem;
-
-                if (ex.Message.Contains("já consta em sistema."))
-                {
-                    statusCode = 409;
-                    mensagem = "O CPF informado já consta em sistema.";
-                }
-                else
-                {
-                    statusCode = 500;
-                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
-                }
-
-                return StatusCode(statusCode, mensagem);
+                return Conflict(e.Message);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -81,42 +62,15 @@ namespace ApiOnlineShop.Controllers
         {
             try
             {
-                var cliente = await _clientesService.Atualizar(cpf, clienteUpdate);
-
-                return StatusCode(200, cliente);
+                return Ok(await _clientesService.Atualizar(cpf, clienteUpdate));
             }
-            catch (SqlException ex)
+            catch (NotFoundException e)
             {
-                int statusCode;
-                string mensagem;
-
-                if (ex.Message.Contains("não consta em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "O Cpf informado não consta em sistema.";
-                }
-                else if (ex.Message.Contains("Cliente não encontrado em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Cliente não encontrado em sistema.";
-                }
-                else if (ex.Message.Contains("Endereco não encontrado em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Endereço não encontrado em sistema.";
-                }
-                else if (ex.Message.Contains("InformacoesContato não encontrado em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Informações de contato não encontradas em sistema.";
-                }
-                else
-                {
-                    statusCode = 500;
-                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
-                }
-
-                return StatusCode(statusCode, mensagem);
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -127,34 +81,15 @@ namespace ApiOnlineShop.Controllers
             {
                 await _clientesService.Deletar(cpf);
 
-                return StatusCode(200, "Cliente deletado com sucesso!");
+                return Ok("Cliente deletado com sucesso!");
             }
-            catch (SqlException ex)
+            catch (NotFoundException e)
             {
-                int statusCode;
-                string mensagem;
-
-                if (ex.Message.Contains("Cliente não consta em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Cliente não consta em sistema.";
-                }
-                else if (ex.Message.Contains("Endereco não consta em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Endereço não consta em sistema.";
-                }
-                else if (ex.Message.Contains("Informações de contato não constam em sistema."))
-                {
-                    statusCode = 404;
-                    mensagem = "Informações de contato não constam em sistema.";
-                } else
-                {
-                    statusCode = 500;
-                    mensagem = "Ops! Ocorreu um erro no servidor. Por gentileza, tentar novamente.";
-                }
-
-                return StatusCode(statusCode, mensagem);
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
             }
         }
     }

@@ -8,11 +8,7 @@ namespace ApiOnlineShop.Repositories.Interfaces
     {
         Task<FornecedorTable> Obter(string cnpj);
 
-        Task<int> Inserir(Endereco endereco);
-
         Task Inserir(Fornecedor fornecedor, int enderecoID);
-
-        Task Atualizar(Endereco endereco);
 
         Task Atualizar(Fornecedor fornecedor);
 

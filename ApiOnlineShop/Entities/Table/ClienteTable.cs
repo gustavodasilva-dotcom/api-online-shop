@@ -1,7 +1,9 @@
-﻿namespace ApiOnlineShop.Models.ViewModels
+﻿namespace ApiOnlineShop.Entities.Table
 {
-    public class ClienteViewModel
+    public class ClienteTable
     {
+        public int ClienteId { get; set; }
+
         public string PrimeiroNome { get; set; }
         
         public string NomeDoMeio { get; set; }
@@ -10,12 +12,16 @@
         
         public string Cpf { get; set; }
         
+        public int InformacoesContatoId { get; set; }
+
         public string Telefone { get; set; }
         
         public string Celular { get; set; }
         
         public string Email { get; set; }
         
+        public int EnderecoId { get; set; }
+
         public string Cep { get; set; }
         
         public string Logradouro { get; set; }

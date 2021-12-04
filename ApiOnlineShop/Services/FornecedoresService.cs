@@ -14,13 +14,17 @@ namespace ApiOnlineShop.Services
     {
         private readonly IValidacoesService _validacoesService;
 
+        private readonly IEnderecosRepository _enderecosRepository;
+
         private readonly IFornecedoresRepository _fornecedoresRepository;
 
-        public FornecedoresService(IValidacoesService validacoesService, IFornecedoresRepository fornecedoresRepository)
+        public FornecedoresService(IValidacoesService validacoesService, IEnderecosRepository enderecosRepository, IFornecedoresRepository fornecedoresRepository)
         {
             _validacoesService = validacoesService;
 
             _fornecedoresRepository = fornecedoresRepository;
+
+            _enderecosRepository = enderecosRepository;
         }
 
         public async Task<FornecedorViewModel> Obter(string cnpj)
@@ -82,7 +86,7 @@ namespace ApiOnlineShop.Services
                 if (fornecedorCadastrado != null)
                     throw new ConflictException("O CNPJ informado já está cadastrado na base de dados.");
 
-                var enderecoID = await _fornecedoresRepository.Inserir(fornecedorInsert.Endereco);
+                var enderecoID = await _enderecosRepository.Inserir(fornecedorInsert.Endereco);
 
                 if (enderecoID == 0)
                     throw new Exception("Ocorreu um erro ao inserir o endereço.");
@@ -146,7 +150,7 @@ namespace ApiOnlineShop.Services
                     }
                 };
 
-                await _fornecedoresRepository.Atualizar(fornecedorUpdate.Endereco);
+                await _enderecosRepository.Atualizar(fornecedorUpdate.Endereco);
 
                 await _fornecedoresRepository.Atualizar(fornecedorUpdate);
 
@@ -185,6 +189,8 @@ namespace ApiOnlineShop.Services
 
                 if (fornecedor == null)
                     throw new NotFoundException($"O CNPJ {cnpj} não corresponde a nenhum fornecedor.");
+
+                await _enderecosRepository.Deletar(fornecedor.EnderecoId);
 
                 await _fornecedoresRepository.Deletar(fornecedor);
             }

@@ -70,19 +70,32 @@ Data de criação: 10-08-2021
 
 		PRINT 'Inserindo na tabela de InformacoesContato: ';
 
+
 		BEGIN TRANSACTION
 
-			INSERT INTO InformacoesContato
-			VALUES
-			(
-				@Telefone,
-				@Celular,
-				@Email,
-				GETDATE(),
-				0
-			);
+			BEGIN TRY
 
-		COMMIT TRANSACTION
+				INSERT INTO InformacoesContato
+				VALUES
+				(
+					@Telefone,
+					@Celular,
+					@Email,
+					GETDATE(),
+					0
+				);
+
+			END TRY
+
+			BEGIN CATCH
+
+				IF @@TRANCOUNT > 0
+					ROLLBACK TRANSACTION;
+
+			END CATCH;
+
+		IF @@TRANCOUNT > 0
+			COMMIT TRANSACTION
 
 		PRINT 'Inseriu na tabela de InformacoesContato.';
 
@@ -94,22 +107,34 @@ Data de criação: 10-08-2021
 		PRINT 'Id de InformacoesContato cadastrado: ' + CAST(@IdInfoContato AS VARCHAR(255));
 
 
-		BEGIN TRANSACTION
+		BEGIN TRANSACTION;
 
-			INSERT INTO Cliente
-			VALUES
-			(
-				@PrimeiroNome,
-				@NomeDoMeio,
-				@Sobrenome,
-				@Cpf,
-				@IdEndereco,
-				@IdInfoContato,
-				GETDATE(),
-				0
-			);
+			BEGIN TRY
 
-		COMMIT TRANSACTION
+				INSERT INTO Cliente
+				VALUES
+				(
+					@PrimeiroNome,
+					@NomeDoMeio,
+					@Sobrenome,
+					@Cpf,
+					@IdEndereco,
+					@IdInfoContato,
+					GETDATE(),
+					0
+				);
+
+			END TRY
+
+			BEGIN CATCH
+
+				IF @@TRANCOUNT > 0
+					ROLLBACK TRANSACTION;
+
+			END CATCH;
+
+		IF @@TRANCOUNT > 0
+			COMMIT TRANSACTION;
 
 		PRINT 'Inseriu na tabela de Cliente.';
 
