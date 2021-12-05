@@ -23,6 +23,8 @@ namespace ApiOnlineShop
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region Services
+
             services.AddScoped<IClientesService, ClientesService>();
             services.AddScoped<IClientesRepository, ClientesRepository>();
 
@@ -45,11 +47,16 @@ namespace ApiOnlineShop
 
             services.AddScoped<IInformacoesContatosRepository, InformacoesContatosRepository>();
 
+            services.AddScoped<ILogsRepository, LogsRepository>();
+            services.AddScoped<ILogsService, LogsService>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiOnlineShop", Version = "v1" });
             });
+
+            #endregion Services
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

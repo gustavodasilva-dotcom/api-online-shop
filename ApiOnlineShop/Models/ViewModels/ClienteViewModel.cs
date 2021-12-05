@@ -2,6 +2,8 @@
 {
     public class ClienteViewModel
     {
+        public int ClienteId { get; set; }
+
         public string PrimeiroNome { get; set; }
         
         public string NomeDoMeio { get; set; }

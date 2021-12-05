@@ -12,10 +12,14 @@ namespace ApiOnlineShop.Controllers
     [ApiController]
     public class ClientesController : ControllerBase
     {
+        private readonly ILogsService _logsService;
+
         private readonly IClientesService _clientesService;
 
-        public ClientesController(IClientesService clientesService)
+        public ClientesController(ILogsService logsService, IClientesService clientesService)
         {
+            _logsService = logsService;
+
             _clientesService = clientesService;
         }
 
@@ -41,18 +45,28 @@ namespace ApiOnlineShop.Controllers
         {
             try
             {
-                return Created("Cliente cadastrado com sucesso!", await _clientesService.Inserir(clienteInsert));
+                var cliente = await _clientesService.Inserir(clienteInsert);
+
+                await _logsService.GravarLog(clienteInsert, cliente, "Cliente cadastrado com sucesso!", cliente.ClienteId, false);
+
+                return Created("Cliente cadastrado com sucesso!", cliente);
             }
             catch (ConflictException e)
             {
+                await _logsService.GravarLog(clienteInsert, e.Message, false);
+
                 return Conflict(e.Message);
             }
             catch (NotFoundException e)
             {
+                await _logsService.GravarLog(clienteInsert, e.Message, false);
+
                 return NotFound(e.Message);
             }
             catch (Exception e)
             {
+                await _logsService.GravarLog(clienteInsert, e.Message, false);
+
                 return StatusCode(500, e.Message);
             }
         }
@@ -62,14 +76,22 @@ namespace ApiOnlineShop.Controllers
         {
             try
             {
-                return Ok(await _clientesService.Atualizar(cpf, clienteUpdate));
+                var cliente = await _clientesService.Atualizar(cpf, clienteUpdate);
+
+                await _logsService.GravarLog(clienteUpdate, cliente, "Cliente atualizado com sucesso!", cliente.ClienteId, false);
+
+                return Ok(cliente);
             }
             catch (NotFoundException e)
             {
+                await _logsService.GravarLog(clienteUpdate, e.Message, false);
+
                 return NotFound(e.Message);
             }
             catch (Exception e)
             {
+                await _logsService.GravarLog(clienteUpdate, e.Message, false);
+
                 return StatusCode(500, e.Message);
             }
         }

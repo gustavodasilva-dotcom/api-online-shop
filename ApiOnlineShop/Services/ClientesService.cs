@@ -37,6 +37,7 @@ namespace ApiOnlineShop.Services
 
                 return new ClienteViewModel
                 {
+                    ClienteId = cliente.ClienteId,
                     PrimeiroNome = cliente.PrimeiroNome,
                     NomeDoMeio = cliente.NomeDoMeio,
                     Sobrenome = cliente.Sobrenome,
