@@ -12,10 +12,14 @@ namespace ApiOnlineShop.Controllers
     [ApiController]
     public class FornecedoresController : ControllerBase
     {
+        private readonly ILogsService _logsService;
+
         private readonly IFornecedoresService _fornecedoresServices;
 
-        public FornecedoresController(IFornecedoresService fornecedoresService)
+        public FornecedoresController(ILogsService logsService, IFornecedoresService fornecedoresService)
         {
+            _logsService = logsService;
+
             _fornecedoresServices = fornecedoresService;
         }
 
@@ -44,20 +48,34 @@ namespace ApiOnlineShop.Controllers
                 var valido = _fornecedoresServices.ValidarDados(fornecedorInsert);
 
                 if (valido.MensagensDeErro.Count > 0)
+                {
+                    await _logsService.GravarLog(fornecedorInsert, valido, "JSON de entrada possui erros.", false);
+
                     return BadRequest(valido);
-                
-                return Created("Fornecedor cadastro com sucesso!", await _fornecedoresServices.Inserir(fornecedorInsert));
+                }
+
+                var fornecedor = await _fornecedoresServices.Inserir(fornecedorInsert);
+
+                await _logsService.GravarLog(fornecedorInsert, fornecedor, "Fornecedor cadastrado com sucesso!", fornecedor.FornecedorId, false);
+
+                return Created("Fornecedor cadastro com sucesso!", fornecedor);
             }
             catch (NotFoundException e)
             {
+                await _logsService.GravarLog(fornecedorInsert, e.Message, false);
+
                 return NotFound(e.Message);
             }
             catch (ConflictException e)
             {
+                await _logsService.GravarLog(fornecedorInsert, e.Message, false);
+
                 return Conflict(e.Message);
             }
             catch (Exception e)
             {
+                await _logsService.GravarLog(fornecedorInsert, e.Message, false);
+
                 return StatusCode(500, $"O seguinte erro ocorreu: {e.Message}");
             }
         }
@@ -70,16 +88,28 @@ namespace ApiOnlineShop.Controllers
                 var valido = _fornecedoresServices.ValidarDados(cnpj, fornecedorUpdate);
 
                 if (valido.MensagensDeErro.Count > 0)
-                    return BadRequest(valido);
+                {
+                    await _logsService.GravarLog(fornecedorUpdate, valido, "JSON de entrada possui erros.", false);
 
-                return Ok(await _fornecedoresServices.Atualizar(cnpj, fornecedorUpdate));
+                    return BadRequest(valido);
+                }
+
+                var fornecedor = await _fornecedoresServices.Atualizar(cnpj, fornecedorUpdate);
+
+                await _logsService.GravarLog(fornecedorUpdate, fornecedor, "Fornecedor atualizado com sucesso!", fornecedor.FornecedorId, false);
+
+                return Ok(fornecedor);
             }
             catch (NotFoundException e)
             {
+                await _logsService.GravarLog(fornecedorUpdate, e.Message, false);
+
                 return NotFound(e.Message);
             }
             catch (Exception e)
             {
+                await _logsService.GravarLog(fornecedorUpdate, e.Message, false);
+
                 return StatusCode(500, $"O seguinte erro ocorreu: {e.Message}");
             }
         }

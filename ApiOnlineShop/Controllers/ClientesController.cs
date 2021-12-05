@@ -45,6 +45,15 @@ namespace ApiOnlineShop.Controllers
         {
             try
             {
+                var valido = _clientesService.ValidarDados(clienteInsert);
+
+                if (valido.MensagensDeErro.Count > 0)
+                {
+                    await _logsService.GravarLog(clienteInsert, valido, "JSON de entrada possui erros.", false);
+
+                    return BadRequest(valido);
+                }
+
                 var cliente = await _clientesService.Inserir(clienteInsert);
 
                 await _logsService.GravarLog(clienteInsert, cliente, "Cliente cadastrado com sucesso!", cliente.ClienteId, false);
@@ -76,6 +85,15 @@ namespace ApiOnlineShop.Controllers
         {
             try
             {
+                var valido = _clientesService.ValidarDados(cpf, clienteUpdate);
+
+                if (valido.MensagensDeErro.Count > 0)
+                {
+                    await _logsService.GravarLog(clienteUpdate, valido, "JSON de entrada possui erros.", false);
+
+                    return BadRequest(valido);
+                }
+
                 var cliente = await _clientesService.Atualizar(cpf, clienteUpdate);
 
                 await _logsService.GravarLog(clienteUpdate, cliente, "Cliente atualizado com sucesso!", cliente.ClienteId, false);

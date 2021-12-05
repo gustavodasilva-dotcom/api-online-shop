@@ -149,7 +149,7 @@ CREATE TABLE DetalhesPedido
 	ProdutoId			INT			NOT NULL,
 	PedidoId			INT			NOT NULL,
 	DataInsercao		DATETIME	NOT NULL,
-	Excluido		BIT				NOT NULL
+	Excluido			BIT			NOT NULL
 
 	CONSTRAINT PK_DetalhesPedidoId PRIMARY KEY(DetalhesPedidoId),
 
@@ -157,5 +157,23 @@ CREATE TABLE DetalhesPedido
 	REFERENCES Produto(ProdutoId),
 
 	CONSTRAINT FK_DetalhesPedido_PedidoId FOREIGN KEY(PedidoId)
+	REFERENCES Pedido(PedidoId)
+);
+
+DROP TABLE IF EXISTS Logs
+CREATE TABLE Logs
+(
+	LogsId			INT				NOT NULL	IDENTITY(10000001,1),
+	Mensagem		VARCHAR(MAX)	NOT NULL,
+	JsonEntrada		VARCHAR(MAX),
+	JsonRetorno		VARCHAR(MAX),
+	PedidoId		INT,
+	RetornoEmail	BIT				NOT NULL,
+	DataInsercao	DATETIME		NOT NULL,
+	Excluido		BIT				NOT NULL
+
+	CONSTRAINT PK_LogsId PRIMARY KEY(LogsId),
+
+	CONSTRAINT FK_Logs_PedidoId FOREIGN KEY(PedidoId)
 	REFERENCES Pedido(PedidoId)
 );

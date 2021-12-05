@@ -33,6 +33,24 @@ namespace ApiOnlineShop.Services
             }
         }
 
+        public async Task GravarLog(object jsonEntrada, object jsonRetorno, string mensagem, bool email)
+        {
+            try
+            {
+                var entrada = ConverterModelParaJson(jsonEntrada);
+
+                var retorno = ConverterModelParaJson(jsonRetorno);
+
+                var retornoEmail = email ? 1 : 0;
+
+                await _logsRepository.GravarLog(mensagem, entrada, retorno, email);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task GravarLog(object jsonEntrada, string mensagem, bool email)
         {
             try

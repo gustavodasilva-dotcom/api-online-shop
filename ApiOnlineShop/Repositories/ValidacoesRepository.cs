@@ -29,7 +29,7 @@ namespace ApiOnlineShop.Repositories
                 
                 IRestResponse response = client.Execute(request);
 
-                if (response.Content.Contains("erro"))
+                if (response.Content.Contains("erro") || response.Content.Contains("Erro"))
                     return false;
 
                 return true;

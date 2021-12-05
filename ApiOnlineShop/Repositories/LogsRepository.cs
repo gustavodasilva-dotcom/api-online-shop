@@ -65,6 +65,61 @@ namespace ApiOnlineShop.Repositories
             }
         }
 
+        public async Task GravarLog(string mensagem, object entrada, object retorno, bool email)
+        {
+            try
+            {
+                using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+                    #region SQL
+
+                    var query =
+                    @"  BEGIN TRANSACTION;
+
+                    	BEGIN TRY
+                    
+                    		INSERT INTO LOGS
+                    		(
+                    			 Mensagem
+                    			,JsonEntrada
+                                ,JsonRetorno
+                    			,RetornoEmail
+                    			,DataInsercao
+                    			,Excluido
+                    		)
+                    		VALUES
+                    		(
+                    			 @mensagem
+                    			,@entrada
+                                ,@retorno
+                    			,@email
+                    			,GETDATE()
+                    			,0
+                    		);
+                    
+                    	END TRY
+                    
+                    	BEGIN CATCH
+                    
+                    		IF @@TRANCOUNT > 0
+                    			ROLLBACK TRANSACTION;
+                    
+                    	END CATCH;
+                    
+                    IF @@TRANCOUNT > 0
+                    	COMMIT TRANSACTION;";
+
+                    #endregion SQL
+
+                    await db.ExecuteAsync(query, new { mensagem, entrada, retorno, email });
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task GravarLog(string mensagem, object entrada, bool email)
         {
             try

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using ApiOnlineShop.CustomExceptions;
 using ApiOnlineShop.Entities.Entities;
 using ApiOnlineShop.Models.ViewModels;
@@ -11,14 +12,18 @@ namespace ApiOnlineShop.Services
 {
     public class ClientesService : IClientesService
     {
+        private readonly IValidacoesService _validacoesService;
+
         private readonly IClientesRepository _clientesRepository;
 
         private readonly IEnderecosRepository _enderecosRepository;
 
         private readonly IInformacoesContatosRepository _informacoesContatosRepository;
 
-        public ClientesService(IClientesRepository clientesRepository, IEnderecosRepository enderecosRepository, IInformacoesContatosRepository informacoesContatosRepository)
+        public ClientesService(IValidacoesService validacoesService, IClientesRepository clientesRepository, IEnderecosRepository enderecosRepository, IInformacoesContatosRepository informacoesContatosRepository)
         {
+            _validacoesService = validacoesService;
+
             _clientesRepository = clientesRepository;
 
             _enderecosRepository = enderecosRepository;
@@ -181,6 +186,103 @@ namespace ApiOnlineShop.Services
                 await _enderecosRepository.Deletar(dadosCliente.EnderecoId);
 
                 await _clientesRepository.Deletar(dadosCliente);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public ErroViewModel ValidarDados(ClienteInputModel model)
+        {
+            var mensagensDeErro = new List<string>();
+
+            try
+            {
+                if (string.IsNullOrEmpty(model.PrimeiroNome)) mensagensDeErro.Add("O nome fantasia do fornecedor não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.NomeDoMeio)) mensagensDeErro.Add("A razão social do fornecedor não pode estar vazia ou nula.");
+                if (string.IsNullOrEmpty(model.Sobrenome)) mensagensDeErro.Add("O CNPJ do fornecedor não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Cpf)) mensagensDeErro.Add("O contato do fornecedor não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Celular)) mensagensDeErro.Add("O número do endereço do fornecedor não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Email)) mensagensDeErro.Add("O número do endereço do fornecedor não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Logradouro)) mensagensDeErro.Add("O logradouro do endereço do fornecedor não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Numero)) mensagensDeErro.Add("O número do endereço do fornecedor não pode estar vazio ou nulo.");
+
+                if (_validacoesService.ENumerico(model.Numero)) mensagensDeErro.Add("O número residencial não é um tipo numérico.");
+                
+                if (!string.IsNullOrEmpty(model.Telefone))
+                    if (_validacoesService.ENumerico(model.Numero)) mensagensDeErro.Add("O número de telefone não é um tipo numérico.");
+
+                if (_validacoesService.ENumerico(model.Celular)) mensagensDeErro.Add("O número de celular não é um tipo numérico.");
+
+                if (string.IsNullOrEmpty(model.Bairro)) mensagensDeErro.Add("O bairro do endereço do fornecedor não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Localidade)) mensagensDeErro.Add("A localidade do endereço do fornecedor não pode estar vazia ou nula.");
+                if (string.IsNullOrEmpty(model.Uf)) mensagensDeErro.Add("A UF do endereço do fornecedor não pode estar vazia ou nula.");
+                if (string.IsNullOrEmpty(model.Pais)) mensagensDeErro.Add("O país do endereço do fornecedor não pode estar vazio ou nulo.");
+
+                if (!_validacoesService.ValidarUf(model.Uf)) mensagensDeErro.Add("O UF informada está inválida.");
+
+                if (!_validacoesService.ValidarCep(model.Cep)) mensagensDeErro.Add("O CEP informado não existe.");
+
+                if (!_validacoesService.ValidarCpf(model.Cpf)) mensagensDeErro.Add("O CNPJ informado está inválido.");
+
+                if (_validacoesService.ValidarEmail(model.Email)) mensagensDeErro.Add("O e-mail informado está inválido.");
+
+                return new ErroViewModel
+                {
+                    StatusCode = 400,
+                    MensagensDeErro = mensagensDeErro
+                };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public ErroViewModel ValidarDados(string cpf, ClienteInputModel model)
+        {
+            var mensagensDeErro = new List<string>();
+
+            try
+            {
+                if (string.IsNullOrEmpty(model.PrimeiroNome)) mensagensDeErro.Add("O primeiro nome do cliente não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.NomeDoMeio)) mensagensDeErro.Add("O nome do meio do cliente não pode estar vazia ou nula.");
+                if (string.IsNullOrEmpty(model.Sobrenome)) mensagensDeErro.Add("O sobrenome do cliente não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Cpf)) mensagensDeErro.Add("O CPF do cliente não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Celular)) mensagensDeErro.Add("O celular do cliente não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Email)) mensagensDeErro.Add("O e-mail do cliente não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Cep)) mensagensDeErro.Add("O CEP do endereço do cliente não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Logradouro)) mensagensDeErro.Add("O logradouro do endereço do cliente não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Numero)) mensagensDeErro.Add("O número do endereço do cliente não pode estar vazio ou nulo.");
+
+                if (_validacoesService.ENumerico(model.Numero)) mensagensDeErro.Add("O número residencial não é um tipo numérico.");
+
+                if (!string.IsNullOrEmpty(model.Telefone))
+                    if (_validacoesService.ENumerico(model.Numero)) mensagensDeErro.Add("O número de telefone não é um tipo numérico.");
+
+                if (_validacoesService.ENumerico(model.Celular)) mensagensDeErro.Add("O número de celular não é um tipo numérico.");
+
+                if (string.IsNullOrEmpty(model.Bairro)) mensagensDeErro.Add("O bairro do endereço do cliente não pode estar vazio ou nulo.");
+                if (string.IsNullOrEmpty(model.Localidade)) mensagensDeErro.Add("A localidade do endereço do cliente não pode estar vazia ou nula.");
+                if (string.IsNullOrEmpty(model.Uf)) mensagensDeErro.Add("A UF do endereço do cliente não pode estar vazia ou nula.");
+                if (string.IsNullOrEmpty(model.Pais)) mensagensDeErro.Add("O país do endereço do cliente não pode estar vazio ou nulo.");
+
+                if (!_validacoesService.ValidarUf(model.Uf)) mensagensDeErro.Add("O UF informada está inválida.");
+
+                if (!_validacoesService.ValidarCep(model.Cep)) mensagensDeErro.Add("O CEP informado não existe.");
+
+                if (!_validacoesService.ValidarCpf(model.Cpf)) mensagensDeErro.Add("O CNPJ informado está inválido.");
+
+                if (!_validacoesService.ValidarCpf(cpf)) mensagensDeErro.Add("O CNPJ informado na rota está inválido.");
+
+                if (_validacoesService.ValidarEmail(model.Email)) mensagensDeErro.Add("O e-mail informado está inválido.");
+
+                return new ErroViewModel
+                {
+                    StatusCode = 400,
+                    MensagensDeErro = mensagensDeErro
+                };
             }
             catch (Exception)
             {

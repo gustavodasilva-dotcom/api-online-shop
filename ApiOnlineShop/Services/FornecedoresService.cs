@@ -38,6 +38,7 @@ namespace ApiOnlineShop.Services
 
                 return new FornecedorViewModel
                 {
+                    FornecedorId = fornecedor.FornecedorId,
                     NomeFantasia = fornecedor.NomeFantasia,
                     RazaoSocial = fornecedor.RazaoSocial,
                     Cnpj = fornecedor.Cnpj,
@@ -221,6 +222,8 @@ namespace ApiOnlineShop.Services
                 if (string.IsNullOrEmpty(model.Uf)) mensagensDeErro.Add("A UF do endereço do fornecedor não pode estar vazia ou nula.");
                 if (string.IsNullOrEmpty(model.Pais)) mensagensDeErro.Add("O país do endereço do fornecedor não pode estar vazio ou nulo.");
 
+                if (!_validacoesService.ValidarUf(model.Uf)) mensagensDeErro.Add("O UF informada está inválida.");
+
                 if (!_validacoesService.ValidarCep(model.Cep)) mensagensDeErro.Add("O CEP informado não existe.");
 
                 if (!_validacoesService.ValidarCnpj(model.Cnpj)) mensagensDeErro.Add("O CNPJ informado está inválido.");
@@ -252,11 +255,12 @@ namespace ApiOnlineShop.Services
 
                 if (_validacoesService.ENumerico(model.Numero)) mensagensDeErro.Add("O número residencial não é um tipo numérico.");
 
-                if (string.IsNullOrEmpty(model.Complemento)) mensagensDeErro.Add("O complemento do endereço do fornecedor não pode estar vazio ou nulo.");
                 if (string.IsNullOrEmpty(model.Bairro)) mensagensDeErro.Add("O bairro do endereço do fornecedor não pode estar vazio ou nulo.");
                 if (string.IsNullOrEmpty(model.Localidade)) mensagensDeErro.Add("A localidade do endereço do fornecedor não pode estar vazia ou nula.");
                 if (string.IsNullOrEmpty(model.Uf)) mensagensDeErro.Add("A UF do endereço do fornecedor não pode estar vazia ou nula.");
                 if (string.IsNullOrEmpty(model.Pais)) mensagensDeErro.Add("O país do endereço do fornecedor não pode estar vazio ou nulo.");
+
+                if (!_validacoesService.ValidarUf(model.Uf)) mensagensDeErro.Add("O UF informada está inválida.");
 
                 if (!_validacoesService.ValidarCep(model.Cep)) mensagensDeErro.Add("O CEP informado não existe.");
 

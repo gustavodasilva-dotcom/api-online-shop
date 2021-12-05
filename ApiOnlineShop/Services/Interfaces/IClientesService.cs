@@ -13,5 +13,9 @@ namespace ApiOnlineShop.Services.Interfaces
         Task<ClienteViewModel> Atualizar(string cpf, ClienteInputModel cliente);
         
         Task Deletar(string cpf);
+
+        ErroViewModel ValidarDados(ClienteInputModel model);
+
+        ErroViewModel ValidarDados(string cpf, ClienteInputModel model);
     }
 }
